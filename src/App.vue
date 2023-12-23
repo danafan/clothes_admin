@@ -1,28 +1,29 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <router-view></router-view>
   </div>
 </template>
-
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import resource from '@/api/resource.js'
+  export default {
+    computed:{
+      //当前路由地址
+      active_path(){
+        return this.$store.state.active_path;
+      },
+    },
+    created(){
+      //获取用户信息
+      resource.getUserInfo().then(res => {
+        if (res.data.code == 1) {
+          this.$store.commit('setUserInfo',res.data.data);
+          this.$router.replace(this.active_path);
+        }else{
+          this.$message.warning(res.data.msg)
+        }
+      })
+      
+    }
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
   }
-}
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>

@@ -1,17 +1,505 @@
 <!DOCTYPE html>
-<html lang="">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <link rel="icon" href="<%= BASE_URL %>favicon.ico">
-    <title><%= htmlWebpackPlugin.options.title %></title>
-  </head>
-  <body>
-    <noscript>
-      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
-    <div id="app"></div>
-    <!-- built files will be auto injected -->
-  </body>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>服装综合管理系统</title>
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <style type="text/css">
+    *{
+      margin:0;
+      padding: 0;
+    }
+    html,body{
+      font-family: SourceHanSansCN, SourceHanSansCN;
+    }
+    div{
+      box-sizing: border-box;
+    }
+    .border{
+      border:1px solid red;
+    }
+    .absolute{
+      position: absolute;
+    }
+    .relative{
+      position: relative;
+    }
+    .top-0{
+      top: 0;
+    }
+    .left-0{
+      left: 0;
+    }
+    .pointer{
+      cursor: pointer;
+    }
+    .white_color{
+      color: #ffffff;
+    }
+    .primary_color{
+      color: #2A37FD;
+    }
+    .table_color{
+      color: #4E5969;
+    }
+    .default_color{
+      color: #718096;
+    }
+    .fw400{
+      font-weight: 400;
+    }
+    .fw500{
+      font-weight: 500;
+    }
+    .fw600{
+      font-weight: 600;
+    }
+    .bold{
+      font-weight: bold;
+    }
+    .f12{
+      font-size: 12px;
+    }
+    .f13{
+      font-size: 13px;
+    }
+    .f14{
+      font-size: 14px;
+    }
+    .f15{
+      font-size: 15px;
+    }
+    .f16{
+      font-size: 16px;
+    }
+    .f17{
+      font-size: 16px;
+    }
+    .f18{
+      font-size: 16px;
+    }
+    .f19{
+      font-size: 16px;
+    }
+    .f20{
+      font-size: 20px;
+    }
+    .f22{
+      font-size: 22px;
+    }
+    .f28{
+      font-size: 28px;
+    }
+    .ml16{
+      margin-left: 16px;
+    }
+    .ml24{
+      margin-left: 24px;
+    }
+    .ml32{
+      margin-left: 32px;
+    }
+    .mr-6{
+      margin-right: 6px;
+    }
+    .mr8{
+      margin-right: 8px;
+    }
+    .mr-10{
+      margin-right: 10px;
+    }
+    .mr-13{
+      margin-right: 13px;
+    }
+    .mr-14{
+      margin-right: 14px;
+    }
+    .mr-15{
+      margin-right: 15px;
+    }
+    .mr16{
+      margin-right: 16px;
+    }
+    .mr-18{
+      margin-right: 18px;
+    }
+    .mr-20{
+      margin-right: 20px;
+    }
+    .mr24{
+      margin-right: 24px;
+    }
+    .mr-25{
+      margin-right: 25px;
+    }
+    .mr32{
+      margin-right: 32px;
+    }
+    .mr-38{
+      margin-right: 38px;
+    }
+    .mr-60{
+      margin-right: 60px;
+    }
+    .mt-10{
+      margin-top: 10px;
+    }
+    .mt-15{
+      margin-top: 15px;
+    }
+    .mt24{
+      margin-top: 24px;
+    }
+    .mt-40{
+      margin-top: 40px;
+    }
+    .mt-90{
+      margin-top: 90px;
+    }
+    .mb-3{
+      margin-bottom: 3px;
+    }
+    .mb8{
+      margin-bottom: 8px;
+    }
+    .mb-10{
+      margin-bottom: 10px;
+    }
+    .mb-12{
+      margin-bottom: 12px;
+    }
+    .mb-13{
+      margin-bottom: 13px;
+    }
+    .mb-15{
+      margin-bottom: 15px;
+    }
+    .mb16{
+      margin-bottom: 16px;
+    }
+    .mb-17{
+      margin-bottom: 17px;
+    }
+    .mb-20{
+      margin-bottom: 20px;
+    }
+    .mb24{
+      margin-bottom: 24px;
+    }
+    .mb-40{
+      margin-bottom: 40px;
+    }
+    .p10{
+      padding: 10px;
+    }
+    .pt-6{
+      padding-top: 6px;
+    }
+    .pt-14{
+      padding-top: 14px;
+    }
+    .pr-6{
+      padding-right: 6px;
+    }
+    .pr-10{
+      padding-right: 10px;
+    }
+    .pr16{
+      padding-right: 16px;
+    }
+    .pr24{
+      padding-right: 24px;
+    }
+    .pb-6{
+      padding-bottom: 6px;
+    }
+    .pb-14{
+      padding-bottom: 14px;
+    }
+    .pb16{
+      padding-bottom: 16px;
+    }
+    .pb-20{
+      padding-bottom: 20px;
+    }
+    .pl-6{
+      padding-left: 6px;
+    }
+    .pl-14{
+      padding-left: 14px;
+    }
+    .pl16{
+      padding-left: 16px;
+    }
+    .pl-18{
+      padding-left: 18px;
+    }
+    .pl-10{
+      padding-left: 10px;
+    }
+    .pl-20{
+      padding-left: 20px;
+    }
+    .pl24{
+      padding-left: 24px;
+    }
+    .pl-26{
+      padding-left: 26px;
+    }
+    .p16{
+      padding: 16px;
+    }
+    .container{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
+    .table_content{
+      flex: 1;
+      border-radius: 24px;
+      border: 1px solid rgba(226,234,255,.85);
+      margin-bottom: 16px;
+    }
+    .w_100{
+      width: 100%;
+    }
+    .h_100{
+      height: 100%;
+    }
+    .flex{
+      display: flex;
+    }
+    .flex-warp{
+      flex-wrap: wrap;
+    }
+    .flex-1{
+      flex:1;
+    }
+    .fc{
+      flex-direction: column;
+    }
+    .ac{
+      align-items: center;
+    }
+    .ae{
+      align-items: flex-end;
+    }
+    .as{
+      align-items: flex-start;
+    }
+    .jc{
+      justify-content: center;
+    }
+    .jsa{
+      justify-content: space-around;
+    }
+    .jsb{
+      justify-content: space-between;
+    }
+    .jse{
+      justify-content: flex-end;
+    }
+    /* 取消input的上下箭头 */
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none !important;
+    }
+
+    input::-webkit-outer-spin-button {
+      -webkit-appearance: none !important;
+    }
+
+    input[type="number"] {
+      -moz-appearance: textfield;
+    }
+    .scrolly{
+      overflow-y: scroll;
+    }
+    .scroll-y{
+      flex:1 1 auto;
+      height: 0;
+      overflow-y: auto;
+    }
+    .hide_scrollbar::-webkit-scrollbar{display:none}
+    /*超出换行*/
+    .pre-line{
+      white-space:pre-wrap;
+      word-wrap: break-word;
+      word-break: normal;
+    }
+    /*强制不换行*/
+    .space-nowrap{
+      white-space: nowrap;
+    }
+    /*超出不换行，显示省略号*/
+    .table_header_text{
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow:ellipsis;
+    }
+
+    /*表单每项*/
+    .el-form-item{
+      margin-bottom: 16px!important;
+      margin-right: 40px!important;
+    }
+    .el-form-item__label{
+      font-size: 14px!important;
+      color: #1D2129!important;
+      font-weight: 400!important;
+      padding-right: 4px!important;
+    }
+    .custom_label{
+      width: 98px;
+      text-align: end;
+      font-size: 14px;
+      color: #718096;
+      font-weight: 400;
+    }
+    .small_custom_label{
+      width: 82px;
+      text-align: end;
+      font-size: 14px;
+      color: #718096;
+      font-weight: 400;
+      padding-right: 4px;
+    }
+    .dialog_form .el-form-item__label{
+      font-size: 14px!important;
+      color: #718096!important;
+      font-weight: 400!important;
+      width: 90px;
+    }
+    /*日期筛选器*/
+    .el-date-editor{
+      border:none !important;
+      border-radius: 8px !important;
+      background: #F7F8FA !important;
+    }
+/*    区间*/
+    .el-date-editor--daterange{
+      width: 370px !important;
+    }
+/*    单选*/
+    .el-date-editor--date{
+      width: 280px !important;
+    }
+    .el-range-input{
+      background: #F7F8FA !important;
+    }
+    /*普通输入框*/
+    .el-input__inner{
+      border:none !important;
+      border-radius: 8px !important;
+      background: #F7F8FA !important;
+    }
+    /*多行输入框*/
+    .el-textarea__inner{
+      border:none !important;
+      border-radius: 8px !important;
+      background: #F7F8FA !important;
+    }
+    /*分页*/
+    .el-pagination{
+      display: flex!important;
+      align-items: center;
+    }
+    .el-pagination .el-pager .number{
+      margin-right: 8px!important;
+      padding: 0;
+      min-width:0;
+      width: 32px!important;
+      height: 32px!important;
+      line-height: 32px;
+      background: #FFFFFF!important;
+      border-radius: 2px!important;
+      border: 1px solid rgba(0,0,0,0.15)!important;
+    }
+    .el-pagination .btn-prev{
+      margin-right: 8px!important;
+      padding: 0!important;
+      min-width:0;
+      width: 32px;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    .el-pagination .el-icon-more{
+      margin-right: 8px!important;
+      padding: 0!important;
+      min-width:0;
+      width: 32px;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    .el-pagination .el-icon-d-arrow-right{
+      margin-right: 8px!important;
+      padding: 0!important;
+      min-width:0;
+      width: 32px;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    .el-pagination .btn-next{
+      padding: 0!important;
+      min-width:0;
+      width: 32px;
+      height: 32px;
+      background: #FFFFFF;
+      border-radius: 2px;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+    .el-pagination .el-pagination__jump{
+      margin-left: 12px;
+    }
+    .el-pagination .el-pagination__editor{
+      margin-left: 8px;
+      margin-right: 8px;
+      width: 56px;
+      height: 30px;
+      border-radius: 2px;
+      border: 1px solid #D9D9D9;
+    }
+    .el-pagination .el-pagination__editor .el-input__inner{
+      background: #ffffff!important;
+    }
+
+    /*弹窗*/
+    .el-dialog__header{
+      padding: 16px!important;
+    }
+    .el-dialog__body{
+      padding: 16px 24px!important;
+    }
+    .el-dialog__footer{
+      padding: 16px 0!important;
+    }
+    .dialog_title{
+      font-weight: bold!important;
+      font-size: 18px!important;
+      color: #515A68!important;
+    }
+    .close_dialog{
+      width: 28px!important;
+      height: 28px!important;
+    }
+    .dialog_style{
+      border-radius: 16px!important;
+      padding: 0!important;
+    }
+    .ant-message{
+      z-index: 2004!important;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+</body>
 </html>
