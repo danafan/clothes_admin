@@ -34,21 +34,21 @@
 			<!-- 展开-显示菜单列表 -->
 			<div class="w_100" v-if="menu_status">
 				<div class="w_100" v-for="(menu,index) in menuList">
-					<div class="menu_item pl24 pr24 flex ac jsb pointer border" @click="$store.commit('checkMenuStatus',index)">
+					<div class="menu_item pl24 pr24 flex ac jsb pointer border" @mouseenter="mouseMenu('parent',index,true)" @mouseleave="mouseMenu('parent',index,false)" @click="checkMenu(menu,index)">
 						<div class="flex ac">
-							<img class="menu_icon" :src="menu.icon_active" v-if="menu.active">
+							<img class="menu_icon" :src="menu.icon_active" v-if="menu.hover || menu.active">
 							<img class="menu_icon" :src="menu.icon" v-else>
-							<div class="menu_name f14 fw400 space-nowrap" :class="{'active_color':menu.active}">{{menu.name}}</div>
+							<div class="menu_name f14 fw400 space-nowrap" :class="{'active_color':menu.hover || menu.active}">{{menu.name}}</div>
 						</div>
-						<img class="arrow_icon" :class="{'arrow_icon_up':menu.active}" src="@/static/arrow_up_icon.png" v-if="menu.children">
+						<img class="arrow_icon" :class="{'arrow_icon_up':menu.open}" src="@/static/arrow_up_icon.png" v-if="menu.children">
 					</div>
-					<div class="supplier_menu_children" v-if="menu.active && menu.children">
-						<div class="menu_item pl16 pr16 flex ac jsb pointer" @mouseenter="mouseMenu(index,child_index,true)" @mouseleave="mouseMenu(index,child_index,false)" @click="checkMenu(child,index)" v-for="(child,child_index) in menu.children">
+					<div class="supplier_menu_children" v-if="menu.open">
+						<div class="menu_item pl16 pr16 flex ac jsb pointer" @mouseenter="mouseMenu('child',index,true,child_index)" @mouseleave="mouseMenu('child',index,false,child_index)" @click="checkMenu(child,child.parent_index,child_index)" v-for="(child,child_index) in menu.children">
 							<div class="w_100 h_100 flex ac jsb pl24 pr24 border">
 								<div class="flex ac">
-									<img class="menu_icon" :src="child.icon_active" v-if="child.active">
+									<img class="menu_icon" :src="child.icon_active" v-if="child.hover || child.active">
 									<img class="menu_icon" :src="child.icon" v-else>
-									<div class="menu_name f14 fw400 space-nowrap" :class="{'active_color':child.active}">{{child.name}}</div>
+									<div class="menu_name f14 fw400 space-nowrap" :class="{'active_color':child.hover || child.active}">{{child.name}}</div>
 								</div>
 							</div>
 						</div>
@@ -64,8 +64,8 @@
 			<div class="tab_pane flex flex-warp mb16">
 				<div class="tab_item flex ac f14 mr32 mb16 pointer" :class="{'active_tab_item_bg':item.hover || item.active}" @mouseenter="mouseTab(index,true)" @mouseleave="mouseTab(index,false)" @click="$store.commit('checkTab',item)" v-for="(item,index) in tabsList">
 					<div class="space-nowrap">{{item.name}}</div>
-					<img class="tab_close" src="@/static/tab_close_active.png" @click.stop="$store.commit('deleteTab',item)" v-if="(item.hover || item.active) && !item.default">
-					<img class="tab_close" src="@/static/tab_close.png" @click.stop="$store.commit('deleteTab',item)" v-if="!item.hover && !item.active && !item.default">
+					<img class="tab_close" src="@/static/tab_close_active.png" @click.stop="$store.commit('deleteTab',item)" v-if="item.hover || item.active">
+					<img class="tab_close" src="@/static/tab_close.png" @click.stop="$store.commit('deleteTab',item)" v-else>
 				</div>
 			</div>
 			<div class="page_container flex-1">
@@ -101,18 +101,25 @@
 		},
 		methods:{
 			//鼠标移入/移出二级菜单
-			mouseMenu(index,child_index,bool){
+			mouseMenu(type,index,bool,child_index){
 				let arg = {
+					type:type,
 					index:index,
-					child_index:child_index,
 					bool:bool
+				}
+				if(type == 'child'){
+					arg['child_index'] = child_index;
 				}
 				this.$store.commit('mouseMenu',arg);
 			},
 			//切换导航
-			checkMenu(child,index){
-				child['parent_index'] = index;
-				this.$store.commit('checkMenu',child)
+			checkMenu(menu,index,child_index){
+				let arg = {
+					menu:menu,
+					index:index,
+					child_index:child_index
+				}
+				this.$store.commit('checkMenu',arg)
 			},
 			//鼠标移入/移出标签页
 			mouseTab(index,bool){
