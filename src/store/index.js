@@ -166,6 +166,9 @@ const store = new Vuex.Store({
 					})
 				}
 			})
+			state.tabsList.map(item => {
+				item.active = item.path == tab.path;
+			})
 			state.active_path = tab.path;
 			sessionStorage.setItem("activePath",JSON.stringify(state.active_path));
 			sessionStorage.setItem("tabsList", JSON.stringify(state.tabsList));

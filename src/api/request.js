@@ -69,9 +69,9 @@ export function middleWare(params,type) {
   
   //组织参数
   // var req = {...params,...{sign:sign,token:token}};
-  var req = {...params,...{admin_id:'15523556114924406'}};   //供应商
+  // var req = {...params,...{admin_id:'15523556114924406'}};   //供应商
   // var req = {...params,...{admin_id:'15740402149096123'}};   //品牌
-  // var req = {...params,...{admin_id:'15262575868677723'}};   //后台
+  var req = {...params,...{admin_id:'15262575868677723'}};   //后台
   var get_arr = [];
   //post请求参数
   var form = new FormData();

@@ -23,34 +23,33 @@
 					</div>
 					<!-- 预览按钮 -->
 					<span class="text_style" v-else-if="item.type == 3" @click="openWindow(scope.row[item.prop])">预览</span>
-					<!-- 普通文字 -->
-					<div class="table_cell table_color f14 fw500" v-else>{{scope.row[item.prop]}}</div>
-				</template>
-			</el-table-column>
-			<!-- 操作栏 -->
-			<el-table-column label="操作" align="center" width="140" fixed="right" v-if="Setting">
-				<template slot-scope="scope">
-					<span class="text_style" @click="$emit('editFn',scope.row.goods_id)" v-if="tableName == 'productInfo' && (scope.row.supplier_status == 0 || scope.row.supplier_status == 3)">编辑</span>
-					<span class="text_style" @click="$emit('deleteFn',scope.row.goods_id)" v-if="tableName == 'productInfo' && (scope.row.supplier_status == 0 || scope.row.supplier_status == 3)">删除</span>
-					<span class="text_style" @click="$emit('copyFn',scope.row.goods_id)" v-if="tableName == 'productInfo'">复用新建</span>
-					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productInfo' && (scope.row.supplier_status == 0 || scope.row.supplier_status == 3)">发起审核</span>
-					<span class="text_style" @click="$emit('sendFn',scope.row)" v-if="tableName == 'sendSample' && (scope.row.send_status == 0 || scope.row.send_status == 3 || scope.row.send_status == 4)">寄出</span>
-					<span class="text_style" @click="$emit('uploadFn',scope.row)" v-if="tableName == 'qualityInspection' && (scope.row.quality_inspection_status == 0 || scope.row.quality_inspection_status == 3 || scope.row.quality_inspection_status == 4)">上传</span>
-					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="(tableName == 'productAudit' && scope.row.brand_status == 0) || (tableName == 'reportAudit' && scope.row.quality_inspection_status == 1) || (tableName == 'sampleAudit' && scope.row.send_status == 1)">审核</span>
-					<span class="text_style" @click="$emit('uploadFn',scope.row)" v-if="tableName == 'productAudit' && scope.row.brand_status == 1 && scope.row.brand_ksbm == ''">上传品牌款号</span>
-					<span class="text_style" @click="$emit('cancelFn',scope.row.goods_id)" v-if="(tableName == 'productInfo' && scope.row.supplier_status == 1) || (tableName == 'sendSample' && scope.row.send_status == 1) || (tableName == 'qualityInspection' && scope.row.quality_inspection_status == 1)">撤销</span>
-				</template>
-			</el-table-column>
-		</el-table>
-		<!-- 图片预览 -->
-		<PreviewImage ref="previewImagesDialog" :previewImages="preview_images" :dialogTitle="dialog_title" :initialIndex="initial_index"/>
-	</div>
+					<!-- 按钮 -->
+					<span class="text_style" v-else-if="item.type == 4" @click="buttonCallback(scope.row)">{{scope.row[item.prop]}}</span>
+					<!-- 开关 -->
+					<el-switch v-else-if="item.type == 5" :active-value="1" :inactive-value="0" v-model="scope.row[item.prop]" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeStatus">
+				</el-switch>
+				<!-- 普通文字 -->
+				<div class="table_cell table_color f14 fw500" v-else>{{scope.row[item.prop]}}</div>
+			</template>
+		</el-table-column>
+		<!-- 操作栏 -->
+		<el-table-column label="操作" align="center" width="140" fixed="right" v-if="Setting">
+			<template slot-scope="scope">
+				<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
+			</template>
+		</el-table-column>
+	</el-table>
+	<!-- 图片预览 -->
+	<PreviewImage ref="previewImagesDialog" :previewImages="preview_images" :dialogTitle="dialog_title" :initialIndex="initial_index"/>
+</div>
 </template>
 <script>
 	// 字段类型（type）：
 	// 1、图片
 	// 2、轮播图
 	// 3、预览按钮
+	// 4、按钮
+	// 5、开关
 	import PageButton from '@/components/pageButton'
 	import PreviewImage from '@/components/previewImage'
 	export default{
@@ -233,6 +232,10 @@
 					flexWidth = 96
 				}
 				return flexWidth + 'px'
+			},
+			//切换开关
+			changeStatus(v){
+				this.$emit('changeStatus',v)
 			},
 			//打开新窗口
 			openWindow(url){
