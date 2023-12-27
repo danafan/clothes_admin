@@ -34,7 +34,7 @@
 		</div>
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
 		<!-- 添加成员 -->
-		<custom-dialog dialogTitle="添加成员" ref="addMemberDialog" @close="wx_user_id == ''" @callback="addMemberConfirm">
+		<custom-dialog dialogTitle="添加成员" ref="addMemberDialog" @close="wx_user_id = ''" @callback="addMemberConfirm">
 			<el-form class="dialog_form">
 				<el-form-item label="供应商名称：">
 					<div class="custom_value">{{view_supplier_name}}</div>
@@ -75,8 +75,8 @@
 			<div class="default_color f14 fw400">确定删除该供应商？</div>
 		</custom-dialog>
 		<!-- 成员列表 -->
-		<custom-dialog :dialogTitle="`供应商：【${view_supplier_name}】`" :showConfirm="false" cancelText="关闭" ref="userListDialog">
-			<el-table :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" v-loading="loading" border>
+		<custom-dialog :dialogTitle="`供应商：【${view_supplier_name}】`" :showConfirm="false" cancelText="关闭" @close="wx_user_id = ''" ref="userListDialog">
+			<el-table :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
 				<el-table-column label="序号" align="center" type="index" width="60">
 				</el-table-column>
 				<el-table-column label="姓名" prop="wx_user_name" align="center">
@@ -89,7 +89,9 @@
 				</el-table-column>
 				<el-table-column label="操作" align="center">
 					<template slot-scope="scope">
-						<span class="text_style">删除</span>
+						<el-popconfirm hide-icon title="确认删除该用户？" @confirm="delUser">
+							<span slot="reference" class="text_style" @click="wx_user_id = scope.row.wx_user_id">删除</span>
+						</el-popconfirm>
 					</template>
 				</el-table-column>
 			</el-table>
@@ -136,7 +138,7 @@
 					label:'添加时间',
 					prop:'add_time',
 				},{
-					label:'账户启用状态',
+					label:'启用状态',
 					prop:'is_enable',
 					type:5
 				},{
@@ -231,10 +233,15 @@
 			buttonCallback(row){
 				this.supplier_id = row.supplier_id;
 				this.view_supplier_name = row.supplier_name;
+				this.$refs.userListDialog.show_dialog = true;
+				//获取供应商成员
+				this.getUserData();
+			},
+			//获取供应商成员
+			getUserData(){
 				resource.adminSupplierMemberList({supplier_id:this.supplier_id}).then(res => {
 					if (res.data.code == 1) {
 						this.userData = res.data.data.data;
-						this.$refs.userListDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg)
 					}
@@ -242,10 +249,36 @@
 			},
 			//切换用户启用/禁用状态
 			changeUserStatus(status,wx_user_id){
-				console.log(status)
-				console.log(wx_user_id)
+				let arg = {
+					supplier_id:this.supplier_id,
+					wx_user_id:wx_user_id,
+					status:status
+				}
+				resource.adminSupplierEnableUser(arg).then(res => {
+					if (res.data.code == 1) {
+						this.$message.success(res.data.msg)
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
 			},
-			//切换状态开关
+			//删除供应商用户
+			delUser(){
+				let arg = {
+					supplier_id:this.supplier_id,
+					wx_user_id:this.wx_user_id
+				}
+				resource.adminSupplierDelUser(arg).then(res => {
+					if (res.data.code == 1) {
+						this.$message.success(res.data.msg)
+						//获取供应商成员
+						this.getUserData();
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//切换供应商启用/禁用状态开关
 			changeStatus(v){
 				console.log(v)
 			},

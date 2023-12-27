@@ -8,12 +8,12 @@
 			<el-table-column :label="item.label" :prop="item.prop" :width="flexColumnWidth(item.prop,item.label,tableData,item.sort,item.type)" :sortable="item.sort?item.sort:false" align="center" v-for="item in titleList">
 				<template slot-scope="scope">
 					<!-- 普通图片 -->
-					<el-image class="relative" style="top: 3px;" :z-index="2006" :src="domain + scope.row[item.prop]" fit="scale-down" @click="viewImage('only',scope.row[item.prop],scope.row.goods_name)" v-if="item.type == 1"></el-image>
+					<el-image class="relative" style="top: 3px;" :z-index="2006" :src="domain + scope.row[item.prop]" fit="scale-down" @click="viewImage('only',scope.row[item.prop],scope.row)" v-if="item.type == 1"></el-image>
 					<!-- 轮播图片 -->
 					<div class="table_carousel relative" v-else-if="item.type == 2">
 						<el-carousel class="el_carousel" :ref="`${tableName}_${item.prop}_${scope.$index}`" arrow="never" indicator-position="none" :autoplay="false" height="110px">
 							<el-carousel-item v-for="(img_url,index) in scope.row[item.prop]" :key="index">
-								<el-image :z-index="2006" :src="domain + img_url" @click="viewImage('arr',scope.row[item.prop],scope.row.goods_name,index)" fit="scale-down"></el-image>
+								<el-image :z-index="2006" :src="domain + img_url" @click="viewImage('arr',scope.row[item.prop],scope.row,index)" fit="scale-down"></el-image>
 							</el-carousel-item>
 						</el-carousel>
 						<div class="carousel_arrow_row flex ac jsb">
@@ -36,9 +36,9 @@
 		<el-table-column label="操作" align="center" :width="settingColumnWidth" fixed="right" v-if="Setting">
 			<template slot-scope="scope">
 				<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
-				<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList'">添加成员</span>
-				<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList'">编辑</span>
-				<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList'">删除</span>
+				<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
+				<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">编辑</span>
+				<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">删除</span>
 			</template>
 		</el-table-column>
 	</el-table>
@@ -139,8 +139,8 @@
 				}
 			},
 			//点击图片预览
-			viewImage(type,preview_src,goods_name,initial_index){
-				this.dialog_title = goods_name;
+			viewImage(type,preview_src,row,initial_index){
+				this.dialog_title = this.tableName == 'brandAttribute'?row.brand_name:row.goods_name;
 				if(type == 'arr'){
 					this.initial_index = initial_index;
 					this.preview_images = preview_src;

@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<el-dialog custom-class="dialog_style" width="420px" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false" @close="$emit('close')" :visible.sync="show_dialog">
+		<el-dialog custom-class="dialog_style" :width="dialogWidth" :show-close="false" :close-on-press-escape="false" :close-on-click-modal="false" @close="$emit('close')" :visible.sync="show_dialog">
 			<div class="flex ac jsb" slot="title">
 				<div class="dialog_title">{{dialogTitle}}</div>
 				<img class="close_dialog pointer" src="@/static/close_dialog.png" @click="show_dialog = false">
@@ -22,6 +22,11 @@
 			}
 		},
 		props:{
+			//弹窗宽度
+			dialogWidth:{
+				type:String,
+			default:'420px'
+			},
 			//弹窗标题
 			dialogTitle:{
 				type:String,
