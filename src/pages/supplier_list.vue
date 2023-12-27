@@ -10,6 +10,12 @@
 				<el-form-item label="搜索：">
 					<el-input style="width:198px" v-model="search" placeholder="供应商/联系方式"></el-input>
 				</el-form-item>
+				<el-form-item label="启用状态：">
+					<el-radio-group v-model="is_enable">
+						<el-radio :label="1">已启用</el-radio>
+						<el-radio :label="0">已停用</el-radio>
+					</el-radio-group>
+				</el-form-item>
 				<el-form-item>
 					<PageButton @callback="changePage(1)"/>
 				</el-form-item>
@@ -21,12 +27,73 @@
 				<div class="table_color f14 fw500">数据列表</div>
 				<div class="flex">
 					<SettingButton :img="require('@/static/export_icon.png')" text="导出" @callback="$refs.exportDialog.show_dialog = true"/>
-					<SettingButton :img="require('@/static/setting_list_icon.png')" text="添加供应商"/>
+					<SettingButton :img="require('@/static/create_icon.png')" text="添加供应商" @callback="addEditSupplier('','add')"/>
 				</div>
 			</div>
-			<CustomTable tableName="productAudit" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @buttonCallback="buttonCallback" @changeStatus="changeStatus"/>
+			<CustomTable tableName="supplierList" settingColumnWidth="180" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @buttonCallback="buttonCallback" @changeStatus="changeStatus" @addMember="addMember" @editFn="addEditSupplier($event,'edit')" @deleteFn="deleteFn"/>
 		</div>
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
+		<!-- 添加成员 -->
+		<custom-dialog dialogTitle="添加成员" ref="addMemberDialog" @close="wx_user_id == ''" @callback="addMemberConfirm">
+			<el-form class="dialog_form">
+				<el-form-item label="供应商名称：">
+					<div class="custom_value">{{view_supplier_name}}</div>
+				</el-form-item>
+				<el-form-item label="选择成员：" required>
+					<el-select style="width:232px" v-model="wx_user_id" filterable placeholder="请选择成员">
+						<el-option v-for="item in user_list" :key="item.wx_user_id" :label="item.wx_user_name" :value="item.wx_user_id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+			</el-form>
+		</custom-dialog>
+		<!-- 添加/编辑供应商 -->
+		<custom-dialog :dialogTitle="`${dialog_type == 'add'?'添加':'编辑'}供应商`" ref="addEditDialog" @close="clearForm" @callback="addEditConfirm">
+			<el-form class="dialog_form">
+				<el-form-item label="供应商名称：" required>
+					<el-input style="width:232px" v-model="supplier_name"></el-input>
+				</el-form-item>
+				<el-form-item label="供应商地址：" required>
+					<el-input style="width:232px" v-model="supplier_address"></el-input>
+				</el-form-item>
+				<el-form-item label="联系方式：" required>
+					<el-input type="number" style="width:232px" v-model="tel"></el-input>
+				</el-form-item>
+				<el-form-item label="合作品牌：" required>
+					<el-select style="width:232px" v-model="brand_ids" multiple filterable placeholder="请选择品牌">
+						<el-option v-for="item in brand_list" :key="item.brand_id" :label="item.brand_name" :value="item.brand_id">
+						</el-option>
+					</el-select>
+				</el-form-item>
+				<el-form-item label="启用状态：">
+					<el-switch :active-value="1" :inactive-value="0" v-model="dialog_is_enable" active-color="#3F8CFF" inactive-color="#ff4949"></el-switch>
+				</el-form-item>
+			</el-form>
+		</custom-dialog>
+		<!-- 删除 -->
+		<custom-dialog dialogTitle="删除" ref="deleteDialog" @callback="deleteConfirm">
+			<div class="default_color f14 fw400">确定删除该供应商？</div>
+		</custom-dialog>
+		<!-- 成员列表 -->
+		<custom-dialog :dialogTitle="`供应商：【${view_supplier_name}】`" :showConfirm="false" cancelText="关闭" ref="userListDialog">
+			<el-table :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" v-loading="loading" border>
+				<el-table-column label="序号" align="center" type="index" width="60">
+				</el-table-column>
+				<el-table-column label="姓名" prop="wx_user_name" align="center">
+				</el-table-column>
+				<el-table-column label="是否启用" align="center">
+					<template slot-scope="scope">
+						<el-switch size="mini" :active-value="1" :inactive-value="0" v-model="scope.row.status" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeUserStatus($event,scope.row.wx_user_id)">
+						</el-switch>
+					</template>
+				</el-table-column>
+				<el-table-column label="操作" align="center">
+					<template slot-scope="scope">
+						<span class="text_style">删除</span>
+					</template>
+				</el-table-column>
+			</el-table>
+		</custom-dialog>
 		<!-- 导出 -->
 		<custom-dialog dialogTitle="导出" ref="exportDialog" @callback="exportFn">
 			<div class="default_color f14 fw400">确定导出吗？</div>
@@ -48,37 +115,50 @@
 			return{
 				unfold:true,						//筛选条件是否展开
 				search:"",							//搜索内容
+				is_enable:1,						//启用状态
 				page:1,
 				pagesize:10,
 				total:0,
 				titleList:[
 				{
 					label:'供应商名称',
-					prop:'brand_name',
+					prop:'supplier_name',
 				},{
 					label:'供应商地址',
-					prop:'brand_name',
+					prop:'supplier_address',
 				},{
 					label:'联系方式',
-					prop:'brand_name',
+					prop:'tel',
 				},{
 					label:'合作品牌',
-					prop:'brand_name',
+					prop:'brand_names',
 				},{
 					label:'添加时间',
-					prop:'brand_name',
+					prop:'add_time',
 				},{
 					label:'账户启用状态',
-					prop:'brand_name',
+					prop:'is_enable',
 					type:5
 				},{
 					label:'成员数量',
-					prop:'brand_name',
+					prop:'user_num',
 					type:4
 				}],
 				tableData:[],
 				table_height:0,
 				loading:false,
+				supplier_id:"",						//点击的供应商
+				dialog_type:"",						//add：添加；edit:编辑
+				supplier_name:"",
+				supplier_address:"",
+				tel:"",
+				brand_list:[],						//品牌列表
+				brand_ids:[],						//选中的品牌
+				dialog_is_enable:1,					//启用状态
+				view_supplier_name:"",				//添加成员/成员列表展示的供应商名称
+				user_list:[],						//用户列表
+				wx_user_id:"",						//选中的用户
+				userData:[],						//供应商的用户列表
 			}
 		},
 		watch:{
@@ -97,7 +177,9 @@
 			window.addEventListener("resize", this.onResize());
 		},
 		created(){
-			//获取商品寄样列表
+			//获取品牌列表
+			this.ajaxBrands();
+			//获取列表
 			this.getData();
 		},
 		methods: {
@@ -109,60 +191,35 @@
 					this.table_height = table_content_height - table_setting_height - 30;
 				});
 			},
+			//获取品牌列表
+			ajaxBrands(){
+				resource.ajaxBrands().then(res => {
+					if (res.data.code == 1) {
+						this.brand_list = res.data.data;
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
 			//获取列表
 			getData(){
 				let arg = {
-					start_date:this.date && this.date.length> 0?this.date[0]:"",
-					end_date:this.date && this.date.length> 0?this.date[1]:"",
-					category_id:this.cate_ids.join(','),
-					goods_name:this.goods_name,
 					search:this.search,
-					price_type:this.price_type,
-					start_price:this.start_price,
-					end_price:this.end_price,
-					supplier_id:this.supplier_ids.join(','),
+					is_enable:this.is_enable,
 					page:this.page,
 					pagesize:this.pagesize
 				}
-				if(this.active_index > 0){
-					arg['admin_status'] = this.radio_list[this.active_index].id;
-				}
 				this.loading = true;
-				resource.adminGoodsList(arg).then(res => {
+				resource.adminSupplierList(arg).then(res => {
 					if(res.data.code == 1){
 						this.loading = false;
 						let data = res.data.data;
 						this.tableData = data.data;
-						this.tableData.map(item => {
-							if(item.admin_status == 0){
-								item['status_name'] = '待发起';
-							}else if(item.admin_status == 1){
-								item['status_name'] = '待审核';
-							}else if(item.admin_status == 2){
-								item['status_name'] = '审核通过';
-							}else if(item.admin_status == 3){
-								item['status_name'] = '审核拒绝';
-							}
-							let new_detail_imgs = [];
-							for (var i = 0; i < item.detail_imgs.length; i += 3) {
-								new_detail_imgs.push(item.detail_imgs.slice(i, i + 3));
-							}
-							item['preview_detail_imgs'] = new_detail_imgs;
-
-							item['selected'] = false;
-							item['is_up'] = true;
-						})
 						this.total = data.total;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
 				})
-			},
-			//切换单选
-			checkRadio(index){
-				this.active_index = index;
-				//获取列表
-				this.getData();
 			},
 			//切换页码
 			changePage(page){
@@ -172,33 +229,175 @@
 			},
 			//点击成员数量
 			buttonCallback(row){
-				console.log(row)
+				this.supplier_id = row.supplier_id;
+				this.view_supplier_name = row.supplier_name;
+				resource.adminSupplierMemberList({supplier_id:this.supplier_id}).then(res => {
+					if (res.data.code == 1) {
+						this.userData = res.data.data.data;
+						this.$refs.userListDialog.show_dialog = true;
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//切换用户启用/禁用状态
+			changeUserStatus(status,wx_user_id){
+				console.log(status)
+				console.log(wx_user_id)
 			},
 			//切换状态开关
 			changeStatus(v){
 				console.log(v)
 			},
+			//点击添加成员
+			addMember(row){
+				this.view_supplier_name = row.supplier_name;
+				this.supplier_id = row.supplier_id;
+				this.$refs.addMemberDialog.show_dialog = true;
+				//获取用户列表
+				this.ajaxUsers();
+			},
+			//获取用户列表
+			ajaxUsers(){
+				resource.ajaxUsers({type:0}).then(res => {
+					if (res.data.code == 1) {
+						this.user_list = res.data.data;
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//添加成员提交
+			addMemberConfirm(){
+				if(this.wx_user_id == ''){
+					this.$message.warning('请选择成员');
+					return;
+				}
+				let arg = {
+					supplier_id:this.supplier_id,
+					wx_user_id:this.wx_user_id
+				}
+				resource.adminSupplierAddMember(arg).then(res => {
+					if (res.data.code == 1) {
+						this.$message.success(res.data.msg);
+							//获取列表
+						this.getData();
+						this.$refs.addMemberDialog.show_dialog = false;
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//点击添加/编辑供应商
+			addEditSupplier(row,type){
+				this.dialog_type = type;
+				if(this.dialog_type == 'add'){			//添加
+					this.$refs.addEditDialog.show_dialog = true;
+				}else{									//编辑
+					this.supplier_id = row.supplier_id;
+					resource.adminSupplierInfo({supplier_id:this.supplier_id}).then(res => {
+						if (res.data.code == 1) {
+							let data = res.data.data;
+							this.supplier_name = data.supplier_name;
+							this.supplier_address = data.supplier_address;
+							this.tel = data.tel;
+							this.brand_ids = data.brand_ids;
+							this.dialog_is_enable = data.is_enable;
+							this.$refs.addEditDialog.show_dialog = true;
+						}else{
+							this.$message.warning(res.data.msg)
+						}
+					})
+				}
+			},
+			//清除添加/编辑表单数据
+			clearForm(){
+				this.supplier_name = "";
+				this.supplier_address = "";
+				this.tel = "";
+				this.brand_ids = [];						
+				this.dialog_is_enable = 1;					
+			},
+			//添加/编辑供应商提交
+			addEditConfirm(){
+				if(this.supplier_name == ''){
+					this.$message.warning('请输入供应商名称');
+					return;
+				}	
+				if(this.supplier_address == ''){
+					this.$message.warning('请输入供应商地址');
+					return;
+				}	
+				if(this.tel == ''){
+					this.$message.warning('请输入联系方式');
+					return;
+				}
+				if(this.brand_ids.length == 0){
+					this.$message.warning('请选择合作品牌');
+					return;
+				}
+				let arg = {
+					supplier_name:this.supplier_name,
+					supplier_address:this.supplier_address,
+					tel:this.tel,
+					brand_ids:this.brand_ids.join(','),						
+					is_enable:this.dialog_is_enable,					
+				}
+				if(this.dialog_type == 'add'){	//添加
+					resource.adminSupplierAdd(arg).then(res => {
+						if (res.data.code == 1) {
+							this.$message.success(res.data.msg);
+							//获取列表
+							this.getData();
+							this.$refs.addEditDialog.show_dialog = false;
+						}else{
+							this.$message.warning(res.data.msg)
+						}
+					})
+				}else{							//编辑
+					arg['supplier_id'] = this.supplier_id;
+					resource.adminSupplierEdit(arg).then(res => {
+						if (res.data.code == 1) {
+							this.$message.success(res.data.msg);
+							//获取列表
+							this.getData();
+							this.$refs.addEditDialog.show_dialog = false;
+						}else{
+							this.$message.warning(res.data.msg)
+						}
+					})
+				}
+				
+			},
+			//点击删除
+			deleteFn(row){
+				this.supplier_id = row.supplier_id;
+				this.$refs.deleteDialog.show_dialog = true;
+			},
+			//删除提交
+			deleteConfirm(){
+				resource.adminSupplierDel({supplier_id:this.supplier_id}).then(res => {
+					if (res.data.code == 1) {
+						this.$message.success(res.data.msg);
+							//获取列表
+						this.getData();
+						this.$refs.deleteDialog.show_dialog = false;
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
 			//导出
 			exportFn(){
 				let arg = {
-					start_date:this.date && this.date.length> 0?this.date[0]:"",
-					end_date:this.date && this.date.length> 0?this.date[1]:"",
-					category_id:this.cate_ids.join(','),
-					goods_name:this.goods_name,
 					search:this.search,
-					price_type:this.price_type,
-					start_price:this.start_price,
-					end_price:this.end_price,
-					supplier_id:this.supplier_ids.join(','),
-				}
-				if(this.active_index > 0){
-					arg['admin_status'] = this.radio_list[this.active_index].id;
+					is_enable:this.is_enable,
 				}
 				let arg_arr = [];
 				for(let k in arg){
 					arg_arr.push(`${k}=${arg[k]}`)
 				}
-				let export_url = `${location.origin}/api/goods/export?${arg_arr.join('&')}`;
+				let export_url = `${location.origin}/api/supplier/export?${arg_arr.join('&')}`;
 				console.log(export_url)
 			},
 			//监听排序
@@ -218,5 +417,13 @@
 	}
 </script>
 <style lang="less" scoped>
-
+	.text_style{
+		cursor: pointer;
+		padding-left: 5px;
+		padding-right: 5px;
+		font-size: 14px;
+		font-weight: 500;
+		color: #609DFF;
+		white-space: nowrap;
+	}
 </style>

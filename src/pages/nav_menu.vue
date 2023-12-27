@@ -240,7 +240,7 @@
 			padding: 16px 24px;
 			.page_card{
 				background: #FFFFFF;
-				padding: 16px 24px 0;
+				padding: 16px 24px;
 			}
 		}
 	}

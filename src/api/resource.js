@@ -10,6 +10,13 @@ let path = {
 	deleteFile:'api/common/del_file',					//删除文件
 	adminGoodsList:'api/goods/list',					//获取商品资料列表
 	adminGoodsAudit:'api/goods/apply_check',			//商品资料审核
+	adminSupplierList:'api/supplier/list',				//供应商列表
+	adminSupplierAdd:'api/supplier/add',				//添加供应商
+	adminSupplierInfo:'api/supplier/info',				//获取供应商详情
+	adminSupplierEdit:'api/supplier/edit',				//编辑供应商
+	adminSupplierDel:'api/supplier/del',				//删除供应商
+	adminSupplierAddMember:'api/supplier/add_user',		//供应商添加用户
+	adminSupplierMemberList:'api/supplier/users',		//获取供应商用户列表
 }					
 export default{
 	//获取用户信息
@@ -51,6 +58,34 @@ export default{
 	//商品资料审核
 	adminGoodsAudit(params){
 		return http.post(path.adminGoodsAudit, params)
+	},
+	//供应商列表
+	adminSupplierList(params){
+		return http.get(path.adminSupplierList, params)
+	},
+	//添加供应商
+	adminSupplierAdd(params){
+		return http.post(path.adminSupplierAdd, params)
+	},
+	//获取供应商详情
+	adminSupplierInfo(params){
+		return http.get(path.adminSupplierInfo, params)
+	},
+	//编辑供应商
+	adminSupplierEdit(params){
+		return http.post(path.adminSupplierEdit, params)
+	},
+	//删除供应商
+	adminSupplierDel(params){
+		return http.post(path.adminSupplierDel, params)
+	},
+	//供应商添加用户
+	adminSupplierAddMember(params){
+		return http.post(path.adminSupplierAddMember, params)
+	},
+	//获取供应商用户列表
+	adminSupplierMemberList(params){
+		return http.get(path.adminSupplierMemberList, params)
 	},
 	
 }

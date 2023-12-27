@@ -24,7 +24,7 @@
 					<!-- 预览按钮 -->
 					<span class="text_style" v-else-if="item.type == 3" @click="openWindow(scope.row[item.prop])">预览</span>
 					<!-- 按钮 -->
-					<span class="text_style" v-else-if="item.type == 4" @click="buttonCallback(scope.row)">{{scope.row[item.prop]}}</span>
+					<span class="text_style" v-else-if="item.type == 4" @click="$emit('buttonCallback',scope.row)">{{scope.row[item.prop]}}</span>
 					<!-- 开关 -->
 					<el-switch v-else-if="item.type == 5" :active-value="1" :inactive-value="0" v-model="scope.row[item.prop]" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeStatus">
 				</el-switch>
@@ -33,9 +33,12 @@
 			</template>
 		</el-table-column>
 		<!-- 操作栏 -->
-		<el-table-column label="操作" align="center" width="140" fixed="right" v-if="Setting">
+		<el-table-column label="操作" align="center" :width="settingColumnWidth" fixed="right" v-if="Setting">
 			<template slot-scope="scope">
 				<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
+				<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList'">添加成员</span>
+				<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList'">编辑</span>
+				<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList'">删除</span>
 			</template>
 		</el-table-column>
 	</el-table>
@@ -91,6 +94,11 @@
 			Setting:{
 				type:Boolean,
 			default:true
+			},
+			//操作栏宽度
+			settingColumnWidth:{
+				type:String,
+			default:'140'
 			},
 			//加载状态
 			loading:{
