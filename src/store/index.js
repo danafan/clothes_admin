@@ -74,8 +74,13 @@ const store = new Vuex.Store({
 		tabsList:sessionStorage.getItem("tabsList")?JSON.parse(sessionStorage.getItem("tabsList")):[],												//当前已打开的菜单列表
 		domain:"",										//文件前缀
 		userInfo:null,									//用户信息
+		tableTotalWidth:0,								//表格可用宽度
 	},
 	mutations: {
+		//设置表格可用宽度
+		setTableTotalWidth(state, width){
+			state.tableTotalWidth = width;
+		},
 		//点击切换一级导航
 		checkMenu(state,index){
 			if(state.menuList[index].children){			//包含子菜单

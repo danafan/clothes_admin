@@ -27,25 +27,26 @@
 					<span class="text_style" v-else-if="item.type == 4" @click="$emit('buttonCallback',scope.row)">{{scope.row[item.prop]}}</span>
 					<!-- 开关 -->
 					<el-switch v-else-if="item.type == 5" :active-value="1" :inactive-value="0" v-model="scope.row[item.prop]" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeStatus">
-				</el-switch>
-				<!-- 普通文字 -->
-				<div class="table_cell table_color f14 fw500" v-else>{{scope.row[item.prop]}}</div>
-			</template>
-		</el-table-column>
-		<!-- 操作栏 -->
-		<el-table-column label="操作" align="center" :width="settingColumnWidth" fixed="right" v-if="Setting">
-			<template slot-scope="scope">
-				<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
-				<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
-				<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting'">编辑</span>
-				<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority'">查看</span>
-				<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority'">删除</span>
-			</template>
-		</el-table-column>
-	</el-table>
-	<!-- 图片预览 -->
-	<PreviewImage ref="previewImagesDialog" :previewImages="preview_images" :dialogTitle="dialog_title" :initialIndex="initial_index"/>
-</div>
+					</el-switch>
+					<!-- 普通文字 -->
+					<div class="table_cell table_color f14 fw500" v-else>{{scope.row[item.prop]}}</div>
+				</template>
+			</el-table-column>
+			<!-- 操作栏 -->
+			<el-table-column label="操作" align="center" :width="settingColumnWidth" :fixed="set_column_fixed?'right':false" v-if="Setting">
+				 <!-- :fixed="actual_width >= usable_width" -->
+				<template slot-scope="scope">
+					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
+					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
+					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting'">编辑</span>
+					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority'">查看</span>
+					<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority'">删除</span>
+				</template>
+			</el-table-column>
+		</el-table>
+		<!-- 图片预览 -->
+		<PreviewImage ref="previewImagesDialog" :previewImages="preview_images" :dialogTitle="dialog_title" :initialIndex="initial_index"/>
+	</div>
 </template>
 <script>
 	// 字段类型（type）：
@@ -60,9 +61,11 @@
 		data(){
 			return{
 				view_image_dialog:false,				//图片放大弹窗
-				dialog_title:"",							//图片放大标题（品名）
-				preview_images:[],					//预览的图片列表
+				dialog_title:"",						//图片放大标题（品名）
+				preview_images:[],						//预览的图片列表
 				initial_index:0,						//当前下标
+				usable_width:0,							//可用总宽度
+				set_column_fixed:false,					//是否
 			}
 		},
 		props:{
@@ -108,7 +111,13 @@
 			},
 		},
 		created(){
-			if(this.tableName == 'productAudit'){	//商品资料审核初始化勾选
+			//设置表格可用总宽度
+			this.usable_width = this.tableTotalWidth;
+			setTimeout(() => {
+				this.set_column_fixed = this.actual_width >= this.usable_width;
+			},1000)
+			//商品资料审核初始化勾选
+			if(this.tableName == 'productAudit'){	
 				this.$nextTick(() => {
 					this.tableData.map(item => {
 						this.$refs.customTable.toggleRowSelection(item,item.selected);
@@ -120,6 +129,17 @@
 			//文件前缀
 			domain(){
 				return this.$store.state.domain;
+			},
+			//表格可用宽度
+			tableTotalWidth(){
+				return this.$store.state.tableTotalWidth;
+			},
+		},
+		watch:{
+			//监听表格可用宽度
+			tableTotalWidth:function(n,o){
+				//设置表格可用总宽度
+				this.usable_width = n;
 			}
 		},
 		methods:{
@@ -189,13 +209,11 @@
 						index = i
 					}
 				}
-				
 				if(tableData[index][prop]){
 					columnContent = tableData[index][prop].length > label.length?tableData[index][prop]:label;
 				}else{
 					columnContent = label;
 				}
-				
 			    // 以下分配的单位长度可根据实际需求进行调整
 				let flexWidth = 0
 				var regPos = /^[0-9]+.?[0-9]*/; //判断是否是数字。
@@ -240,6 +258,7 @@
 				if(type == 3){
 					flexWidth = 96
 				}
+				this.actual_width += flexWidth;
 				return flexWidth + 'px'
 			},
 			//切换开关

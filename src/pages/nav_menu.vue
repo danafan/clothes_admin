@@ -83,7 +83,15 @@
 			}
 		},
 		created(){
-			this.$store.commit('initMenuStatus',this.$route.path)
+			this.$store.commit('initMenuStatus',this.$route.path);
+			//获取表格可用宽度
+			this.getTotalWidth();
+		},
+		watch:{
+			menu_status:function(n,o){
+				//获取表格可用宽度
+				this.getTotalWidth();
+			}	
 		},
 		computed:{
 			//用户信息
@@ -100,6 +108,11 @@
 			}
 		},
 		methods:{
+			//获取表格可用宽度
+			getTotalWidth(){
+				let window_width = document.documentElement.clientWidth;
+				this.$store.commit('setTableTotalWidth',this.menu_status?window_width - 348:window_width - 158)
+			},
 			//鼠标移入/移出一级菜单
 			mouseMenu(index,bool){
 				let arg = {
