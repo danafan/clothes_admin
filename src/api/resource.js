@@ -40,6 +40,21 @@ let path = {
 	ajaxAccess:'api/access/ajaxaccess',					//根据菜单获取按钮列表
 	getControllers:'api/access/getcontrollers',			//获取所有控制器列表
 	getMethods:'api/access/getmethods',					//根据选中的控制器获取方法列表
+	accessAdd:'api/access/add',							//添加权限
+	accessInfo:'api/access/getinfo',					//权限信息
+	accessEdit:'api/access/edit',						//编辑权限
+	accessDel:'api/access/del',							//删除权限
+	menuroleList:'api/menurole/list',					//访问权限列表
+	menuroleAdd:'api/menurole/add',						//新增角色获取列表/提交
+	menuroleEdit:'api/menurole/edit',					//编辑角色获取详情/提交
+	menuRoleDel:'api/menurole/del',						//删除角色
+	menuroleInfo:'api/menurole/info',					//角色详情
+	menuroleUsers:'api/menurole/users',					//角色下面的用户列表
+	ajaxRoleList:'api/user/ajaxrolelist',				//权限配置角色筛选项列表
+	userList:'api/user/list',							//用户列表
+	userInfo:'api/user/info',							//获取用户详情
+	userEdit:'api/user/edit',							//编辑前获取详情/编辑提交
+
 }					
 export default{
 	//获取用户信息
@@ -197,6 +212,74 @@ export default{
 	//根据选中的控制器获取方法列表
 	getMethods(params){
 		return http.get(path.getMethods, params)
+	},
+	//添加权限
+	accessAdd(params){
+		return http.post(path.accessAdd, params)
+	},
+	//权限信息
+	accessInfo(params){
+		return http.get(path.accessInfo, params)
+	},
+	//编辑权限
+	accessEdit(params){
+		return http.post(path.accessEdit, params)
+	},
+	//删除权限
+	accessDel(params){
+		return http.post(path.accessDel, params)
+	},
+	//访问权限列表
+	menuroleList(params){
+		return http.get(path.menuroleList, params)
+	},
+	//新增角色获取列表
+	menuroleAddGet(params){
+		return http.get(path.menuroleAdd, params)
+	},
+	//新增角色
+	menuroleAddPost(params){
+		return http.post(path.menuroleAdd, params)
+	},
+	//点击编辑角色获取详情
+	menuroleEditGet(params){
+		return http.get(path.menuroleEdit, params)
+	},
+	//角色编辑提交
+	menuroleEditPost(params){
+		return http.post(path.menuroleEdit, params)
+	},
+	//删除角色
+	menuRoleDel(params){
+		return http.post(path.menuRoleDel, params)
+	},
+	//角色详情
+	menuroleInfo(params){
+		return http.get(path.menuroleInfo, params)
+	},
+	//角色下面的用户列表
+	menuroleUsers(params){
+		return http.get(path.menuroleUsers, params)
+	},
+	//权限配置角色筛选项列表
+	ajaxRoleList(params){
+		return http.get(path.ajaxRoleList, params)
+	},
+	//用户列表
+	userList(params){
+		return http.get(path.userList, params)
+	},
+	//用户详情
+	userInfo(params){
+		return http.get(path.userInfo, params)
+	},
+	//编辑前获取详情
+	userEditGet(params){
+		return http.get(path.userEdit, params)
+	},
+	//编辑前获取详情
+	userEditPost(params){
+		return http.post(path.userEdit, params)
 	},
 	
 }

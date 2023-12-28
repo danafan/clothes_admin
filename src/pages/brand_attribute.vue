@@ -61,10 +61,10 @@
 				<el-form-item label="联系方式：" required>
 					<el-input type="number" style="width:232px" v-model="tel"></el-input>
 				</el-form-item>
-				<el-form-item label="品牌LOGO：" required>
+				<el-form-item class="auto_form_item" label="品牌LOGO：" required>
 					<UploadImage text="上传一张LOGO" :imgStr="logo" :request="dialog_type == 'add'" @callback="uploadImage"/>
 				</el-form-item>
-				<el-form-item label="备注：">
+				<el-form-item class="auto_form_item" label="备注：">
 					<el-input style="width:232px;" :rows="4" type="textarea" v-model="remark" clearable></el-input>
 				</el-form-item>
 				<el-form-item label="启用状态：">
@@ -668,6 +668,14 @@
 		}
 	}
 </script>
+<style type="text/css">
+	.auto_form_item{
+		height: auto!important;
+	}
+	.auto_form_item .el-form-item__content{
+		height: auto!important;
+	}
+</style>
 <style lang="less" scoped>
 	.text_style{
 		cursor: pointer;
