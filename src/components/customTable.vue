@@ -37,8 +37,8 @@
 			<template slot-scope="scope">
 				<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
 				<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
-				<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">编辑</span>
-				<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">删除</span>
+				<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter'">编辑</span>
+				<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter'">删除</span>
 			</template>
 		</el-table-column>
 	</el-table>

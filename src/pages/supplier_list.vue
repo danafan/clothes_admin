@@ -76,7 +76,7 @@
 		</custom-dialog>
 		<!-- 成员列表 -->
 		<custom-dialog :dialogTitle="`供应商：【${view_supplier_name}】`" :showConfirm="false" cancelText="关闭" @close="wx_user_id = ''" ref="userListDialog">
-			<el-table :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
+			<el-table class="mb8" :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
 				<el-table-column label="序号" align="center" type="index" width="60">
 				</el-table-column>
 				<el-table-column label="姓名" prop="wx_user_name" align="center">
@@ -95,6 +95,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<Pagination :page="user_page" :pagesize="user_pagesize" :total="user_total" @changePage="changeUserPage"/>
 		</custom-dialog>
 		<!-- 导出 -->
 		<custom-dialog dialogTitle="导出" ref="exportDialog" @callback="exportFn">
@@ -161,6 +162,9 @@
 				user_list:[],						//用户列表
 				wx_user_id:"",						//选中的用户
 				userData:[],						//供应商的用户列表
+				user_page:1,
+				user_pagesize:5,
+				user_total:0,
 			}
 		},
 		watch:{
@@ -239,13 +243,26 @@
 			},
 			//获取供应商成员
 			getUserData(){
-				resource.adminSupplierMemberList({supplier_id:this.supplier_id}).then(res => {
+				let arg = {
+					page:this.user_page,
+					pagesize:this.user_pagesize,
+					supplier_id:this.supplier_id
+				}
+				resource.adminSupplierMemberList(arg).then(res => {
 					if (res.data.code == 1) {
-						this.userData = res.data.data.data;
+						let data = res.data.data.data;
+						this.userData = data.data;
+						this.user_total = data.total;
 					}else{
 						this.$message.warning(res.data.msg)
 					}
 				})
+			},
+			//用户翻页
+			changeUserPage(page){
+				this.user_page = page;
+				//获取品牌成员
+				this.getUserData();
 			},
 			//切换用户启用/禁用状态
 			changeUserStatus(status,wx_user_id){

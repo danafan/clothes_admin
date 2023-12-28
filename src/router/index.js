@@ -6,7 +6,9 @@ const nav_menu = (resolve) => require(["@/pages/nav_menu"], resolve);
 const product_audit = (resolve) => require(["@/pages/product_audit"], resolve);
 const supplier_list = (resolve) => require(["@/pages/supplier_list"], resolve);
 const brand_attribute = (resolve) => require(["@/pages/brand_attribute"], resolve);
+const auth_setting = (resolve) => require(["@/pages/permission/auth_setting"], resolve);
 const access_authority = (resolve) => require(["@/pages/permission/access_authority"], resolve);
+const auth_enter = (resolve) => require(["@/pages/permission/auth_enter"], resolve);
 
 
 Vue.use(Router);
@@ -36,9 +38,17 @@ const router = new Router({
 			name: "品牌属性库",
 			component: brand_attribute
 		},{
+			path: "/auth_setting",
+			name: "权限配置",
+			component: auth_setting
+		},{
 			path: "/access_authority",
 			name: "访问权限",
 			component: access_authority
+		},{
+			path: "/auth_enter",
+			name: "权限录入",
+			component: auth_enter
 		}
 		],
 	},

@@ -46,7 +46,6 @@
 	}
 	.active_radio_item{
 		border: 1px solid #609DFF;
-		background: #EBF3FF;
 		color: #609DFF;
 	}
 	.active_left_boder{

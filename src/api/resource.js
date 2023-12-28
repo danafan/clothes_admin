@@ -34,6 +34,12 @@ let path = {
 	adminBrandSeries:'api/series/list',					//系列管理列表
 	adminSeriesDel:'api/series/del',					//删除系列
 	adminSeriesAdd:'api/series/add',					//添加系列
+	//权限
+	accessList:'api/access/accesslist',					//权限录入列表
+	getMainMenus:'api/access/getmainmenus',				//获取所属菜单列表
+	ajaxAccess:'api/access/ajaxaccess',					//根据菜单获取按钮列表
+	getControllers:'api/access/getcontrollers',			//获取所有控制器列表
+	getMethods:'api/access/getmethods',					//根据选中的控制器获取方法列表
 }					
 export default{
 	//获取用户信息
@@ -171,6 +177,26 @@ export default{
 	//添加系列
 	adminSeriesAdd(params){
 		return http.post(path.adminSeriesAdd, params)
+	},
+	//权限录入列表
+	accessList(params){
+		return http.get(path.accessList, params)
+	},
+	//获取所属菜单列表
+	getMainMenus(params){
+		return http.get(path.getMainMenus, params)
+	},
+	//根据菜单获取按钮列表
+	ajaxAccess(params){
+		return http.get(path.ajaxAccess, params)
+	},
+	//获取所有控制器列表
+	getControllers(params){
+		return http.get(path.getControllers, params)
+	},
+	//根据选中的控制器获取方法列表
+	getMethods(params){
+		return http.get(path.getMethods, params)
 	},
 	
 }

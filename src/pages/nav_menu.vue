@@ -232,7 +232,6 @@
 			}
 			.active_tab_item_bg{
 				border:1px solid #609DFF;
-				background: #EBF3FF;
 				color: #609DFF;
 			}
 		}

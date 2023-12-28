@@ -35,20 +35,36 @@ const store = new Vuex.Store({
 			hover:false,
 			active:false
 		},{
-			name:'权限配置',
-			icon:require('@/static/auth_icon.png'),
-			icon_active:require('@/static/auth_icon_active.png'),
-			icon_big:require('@/static/auth_icon.png'),
-			icon_big_active:require('@/static/auth_icon_active.png'),
+			name:'权限管理',
+			icon:require('@/static/auth_management.png'),
+			icon_active:require('@/static/auth_management_active.png'),
+			icon_big:require('@/static/auth_management.png'),
+			icon_big_active:require('@/static/auth_management_active.png'),
 			path:'/permission',
 			hover:false,
 			active:false,
 			open:false,
 			children:[{
+				name:'权限配置',
+				icon:require('@/static/auth_setting.png'),
+				icon_active:require('@/static/auth_setting_active.png'),
+				path:'/auth_setting',
+				parent_index:3,
+				hover:false,
+				active:false
+			},{
 				name:'访问权限',
-				icon:require('@/static/access_authority.png'),
-				icon_active:require('@/static/access_authority_active.png'),
+				icon:require('@/static/access_auth.png'),
+				icon_active:require('@/static/access_auth_active.png'),
 				path:'/access_authority',
+				parent_index:3,
+				hover:false,
+				active:false
+			},{
+				name:'权限录入',
+				icon:require('@/static/auth_enter.png'),
+				icon_active:require('@/static/auth_enter_active.png'),
+				path:'/auth_enter',
 				parent_index:3,
 				hover:false,
 				active:false

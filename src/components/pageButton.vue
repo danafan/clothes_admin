@@ -17,12 +17,13 @@
 </script>
 <style lang="less" scoped>
 	.button_style{
-		width: 88px;
+		width: 60px;
 		text-align: center;
-		height: 40px;
-		line-height: 40px;
-		border-radius: 8px;
+		height: 32px;
+		line-height: 32px;
+		border-radius: 2px;
 		font-size: 14px;
+		font-weight: 400;
 	}
 	.primary{
 		background: #609DFF;

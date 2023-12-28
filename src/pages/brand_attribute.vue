@@ -78,7 +78,7 @@
 		</custom-dialog>
 		<!-- 成员列表 -->
 		<custom-dialog :dialogTitle="`品牌名称：【${view_brand_name}】`" :showConfirm="false" cancelText="关闭" @close="wx_user_id = ''" ref="userListDialog">
-			<el-table :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
+			<el-table class="mb8" :data="userData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
 				<el-table-column label="序号" align="center" type="index" width="60">
 				</el-table-column>
 				<el-table-column label="姓名" prop="wx_user_name" align="center">
@@ -97,6 +97,7 @@
 					</template>
 				</el-table-column>
 			</el-table>
+			<Pagination :page="user_page" :pagesize="user_pagesize" :total="user_total" @changePage="changeUserPage"/>
 		</custom-dialog>
 		<!-- 导出 -->
 		<custom-dialog dialogTitle="导出" ref="exportDialog" @callback="exportFn">
@@ -122,7 +123,7 @@
 				<SettingButton slot="reference" :img="require('@/static/create_icon.png')" text="添加系列"/>
 			</el-popover>
 		</div>
-		<el-table :data="seriesData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
+		<el-table class="mb8" :data="seriesData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
 			<el-table-column label="序号" align="center" type="index" width="60">
 			</el-table-column>
 			<el-table-column label="系列名称" prop="series_name" align="center">
@@ -137,6 +138,7 @@
 				</template>
 			</el-table-column>
 		</el-table>
+		<Pagination :page="series_page" :pagesize="series_pagesize" :total="series_total" @changePage="changeSeriesPage"/>
 	</custom-dialog>
 	<!-- 品类管理 -->
 	<custom-dialog dialogTitle="管理品类" dialogWidth="520px" :showConfirm="false" cancelText="关闭" @close="category_name = ''" ref="categoryDialog">
@@ -158,7 +160,7 @@
 			<SettingButton slot="reference" :img="require('@/static/create_icon.png')" text="添加品类"/>
 		</el-popover>
 	</div>
-	<el-table :data="categoryData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
+	<el-table class="mb8" :data="categoryData" :header-cell-style="{'background':'#DDE7FF','height':'58px','color':'#4E5969','font-size':'14px'}" border>
 		<el-table-column label="序号" align="center" type="index" width="60">
 		</el-table-column>
 		<el-table-column label="品类名称" prop="category_name" align="center">
@@ -173,6 +175,7 @@
 			</template>
 		</el-table-column>
 	</el-table>
+	<Pagination :page="category_page" :pagesize="category_pagesize" :total="category_total" @changePage="changeCategoryPage"/>
 </custom-dialog>
 </div>
 </template>
@@ -245,12 +248,21 @@
 				user_list:[],						//用户列表
 				wx_user_id:"",						//选中的用户
 				userData:[],						//品牌的用户列表
+				user_page:1,
+				user_pagesize:5,
+				user_total:0,
 				category_name:"",					//品类管理添加的品类名称
 				categoryData:[],					//品类管理列表
+				category_page:1,
+				category_pagesize:5,
+				category_total:0,
 				category_id:"",						//删除选中的品类ID
 				add_category_popover:false,			//添加品类弹窗
 				series_name:"",						//系列管理添加的系列名称
 				seriesData:[],						//系列管理列表
+				series_page:1,
+				series_pagesize:5,
+				series_total:0,
 				series_id:"",						//删除选中的系列ID
 				add_series_popover:false,			//添加系列弹窗
 			}
@@ -319,13 +331,26 @@
 			},
 			//获取品牌成员
 			getUserData(){
-				resource.adminBrandMemberList({brand_id:this.brand_id}).then(res => {
+				let arg = {
+					page:this.user_page,
+					pagesize:this.user_pagesize,
+					brand_id:this.brand_id
+				}
+				resource.adminBrandMemberList(arg).then(res => {
 					if (res.data.code == 1) {
-						this.userData = res.data.data.data;
+						let data = res.data.data;
+						this.userData = data.data;
+						this.user_total = data.total;
 					}else{
 						this.$message.warning(res.data.msg)
 					}
 				})
+			},
+			//用户翻页
+			changeUserPage(page){
+				this.user_page = page;
+				//获取品牌成员
+				this.getUserData();
 			},
 			//切换用户启用/禁用状态
 			changeUserStatus(status,wx_user_id){
@@ -522,15 +547,26 @@
 			},
 			//点击系列管理
 			getSeries(){
-				resource.adminBrandSeries().then(res => {
+				let arg = {
+					page:this.series_page,
+					pagesize:this.series_pagesize
+				}
+				resource.adminBrandSeries(arg).then(res => {
 					if (res.data.code == 1) {
 						let data = res.data.data;
 						this.seriesData = data.data;
+						this.series_total = data.total;
 						this.$refs.seriesDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg)
 					}
 				})
+			},
+			//系列翻页
+			changeSeriesPage(page){
+				this.series_page = page;
+				//获取系列列表
+				this.getSeries();
 			},
 			//添加系列提交
 			addSeries(){
@@ -550,7 +586,7 @@
 					}
 				})
 			},
-			//系列管理删除品类
+			//系列管理删除系列
 			delSeries(){
 				resource.adminSeriesDel({series_id:this.series_id}).then(res => {
 					if (res.data.code == 1) {
@@ -564,15 +600,26 @@
 			},
 			//点击品类管理
 			getCategory(){
-				resource.adminBrandCategory().then(res => {
+				let arg = {
+					page:this.category_page,
+					pagesize:this.category_pagesize
+				}
+				resource.adminBrandCategory(arg).then(res => {
 					if (res.data.code == 1) {
 						let data = res.data.data;
 						this.categoryData = data.data;
+						this.category_total = data.total;
 						this.$refs.categoryDialog.show_dialog = true;
 					}else{
 						this.$message.warning(res.data.msg)
 					}
 				})
+			},
+			//品类翻页
+			changeCategoryPage(page){
+				this.category_page = page;
+				//获取系列列表
+				this.getCategory();
 			},
 			//添加品类提交
 			addCategory(){
