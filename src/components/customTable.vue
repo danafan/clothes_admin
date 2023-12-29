@@ -34,7 +34,6 @@
 			</el-table-column>
 			<!-- 操作栏 -->
 			<el-table-column label="操作" align="center" :width="settingColumnWidth" :fixed="set_column_fixed?'right':false" v-if="Setting">
-				 <!-- :fixed="actual_width >= usable_width" -->
 				<template slot-scope="scope">
 					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
 					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
@@ -114,8 +113,8 @@
 			//设置表格可用总宽度
 			this.usable_width = this.tableTotalWidth;
 			setTimeout(() => {
-				this.set_column_fixed = this.actual_width >= this.usable_width;
-			},1000)
+				this.set_column_fixed = this.actual_width + parseInt(this.settingColumnWidth) + 60 >= this.usable_width;
+			},500)
 			//商品资料审核初始化勾选
 			if(this.tableName == 'productAudit'){	
 				this.$nextTick(() => {
