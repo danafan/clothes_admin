@@ -34,6 +34,7 @@ let path = {
 	adminBrandSeries:'api/series/list',					//系列管理列表
 	adminSeriesDel:'api/series/del',					//删除系列
 	adminSeriesAdd:'api/series/add',					//添加系列
+	brandEditCategory:'api/brand/category',				//点击编辑选中的品类（详情或提交）
 	//权限
 	accessList:'api/access/accesslist',					//权限录入列表
 	getMainMenus:'api/access/getmainmenus',				//获取所属菜单列表
@@ -280,6 +281,10 @@ export default{
 	//编辑前获取详情
 	userEditPost(params){
 		return http.post(path.userEdit, params)
+	},
+	//编辑品类前获取详情
+	brandEditCategoryGet(params){
+		return http.get(path.brandEditCategory, params)
 	},
 	
 }

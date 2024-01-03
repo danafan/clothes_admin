@@ -32,7 +32,7 @@
 					<SettingButton :img="require('@/static/create_icon.png')" text="添加品牌" @callback="addEditBrand('','add')"/>
 				</div>
 			</div>
-			<CustomTable tableName="brandAttribute" settingColumnWidth="180" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @buttonCallback="buttonCallback" @changeStatus="changeStatus" @addMember="addMember" @editFn="addEditBrand($event,'edit')" @deleteFn="deleteFn"/>
+			<CustomTable tableName="brandAttribute" settingColumnWidth="180" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @buttonCallback="buttonCallback" @changeStatus="changeStatus" @addMember="addMember" @editFn="addEditBrand($event,'edit')" @deleteFn="deleteFn" @editCate="editCate"/>
 		</div>
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
 		<!-- 添加成员 -->
@@ -177,6 +177,10 @@
 	</el-table>
 	<Pagination :page="category_page" :pagesize="category_pagesize" :total="category_total" @changePage="changeCategoryPage"/>
 </custom-dialog>
+<!-- 选择品类 -->
+<custom-dialog dialogTitle="选择品类" ref="checkCateDialog" @callback="editCateConfirm">
+	<div class="default_color f14 fw400">确定导出吗？</div>
+</custom-dialog>
 </div>
 </template>
 <script>
@@ -222,8 +226,7 @@
 					type:5
 				},{
 					label:'品类',
-					prop:'category_num',
-					type:4
+					prop:'category_num'
 				},{
 					label:'系列',
 					prop:'series_num',
@@ -265,6 +268,7 @@
 				series_total:0,
 				series_id:"",						//删除选中的系列ID
 				add_series_popover:false,			//添加系列弹窗
+				edit_brand_id:"",					//点击编辑品类的ID
 			}
 		},
 		watch:{
@@ -650,6 +654,44 @@
 						this.$message.warning(res.data.msg)
 					}
 				})
+			},
+			//点击编辑品类
+			editCate(brand_id){
+				this.edit_brand_id = brand_id;
+				this.$refs.checkCateDialog.show_dialog = true;
+				resource.brandEditCategoryGet({brand_id:this.edit_brand_id}).then(res => {
+					if (res.data.code == 1) {
+						let data = res.data.data;
+						let category_list = data.category_list;
+						var map = {};
+						var new_category_list = [];
+						for (var i = 0; i < category_list.length; i++) {
+							var ai = category_list[i];
+							if (!map[ai.initial]) {
+								new_category_list.push({
+									initial:ai.initial,
+									data: [ai]
+								});
+								map[ai.initial] = ai;
+							} else {
+								for (var j = 0; j < new_category_list.length; j++) {
+									var dj = new_category_list[j];
+									if (dj.initial == ai.initial) {
+										dj.data.push(ai);
+										break;
+									}
+								}
+							}
+						}
+						console.log(new_category_list);
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//编辑品类提交
+			editCateConfirm(){
+
 			},
 			//监听排序
 			sortChange(v){

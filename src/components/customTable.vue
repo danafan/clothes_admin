@@ -25,6 +25,8 @@
 					<span class="text_style" v-else-if="item.type == 3" @click="openWindow(scope.row[item.prop])">预览</span>
 					<!-- 按钮 -->
 					<span class="text_style" v-else-if="item.type == 4" @click="$emit('buttonCallback',scope.row)">{{scope.row[item.prop]}}</span>
+					<!-- 品牌属性库编辑品类 -->
+					<span class="text_style" v-else-if="tableName == 'brandAttribute' && item.prop == 'category_num'" @click="$emit('editCate',scope.row.brand_id)">{{scope.row[item.prop]}}</span>
 					<!-- 开关 -->
 					<el-switch v-else-if="item.type == 5" :active-value="1" :inactive-value="0" v-model="scope.row[item.prop]" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeStatus">
 					</el-switch>
@@ -107,7 +109,7 @@
 			loading:{
 				type:Boolean,
 			default:false
-			},
+			}
 		},
 		created(){
 			//设置表格可用总宽度

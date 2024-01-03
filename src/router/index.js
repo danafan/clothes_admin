@@ -9,6 +9,8 @@ const brand_attribute = (resolve) => require(["@/pages/brand_attribute"], resolv
 const auth_setting = (resolve) => require(["@/pages/permission/auth_setting"], resolve);
 const access_authority = (resolve) => require(["@/pages/permission/access_authority"], resolve);
 const auth_enter = (resolve) => require(["@/pages/permission/auth_enter"], resolve);
+const main_info = (resolve) => require(["@/pages/mainStore/main_info"], resolve);
+const basic_auth_info = (resolve) => require(["@/pages/mainStore/basic_auth_info"], resolve);
 
 
 Vue.use(Router);
@@ -49,6 +51,14 @@ const router = new Router({
 			path: "/auth_enter",
 			name: "权限录入",
 			component: auth_enter
+		},{
+			path: "/main_info",
+			name: "主体资料表",
+			component: main_info
+		},{
+			path: "/basic_auth_info",
+			name: "店铺基础授权资料",
+			component: basic_auth_info
 		}
 		],
 	},

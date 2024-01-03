@@ -61,11 +61,34 @@ const store = new Vuex.Store({
 				parent_index:3,
 				active:false
 			}]
+		},{
+			name:'店铺主体资料',
+			icon:require('@/static/auth_management.png'),
+			icon_active:require('@/static/auth_management_active.png'),
+			icon_big:require('@/static/auth_management.png'),
+			icon_big_active:require('@/static/auth_management_active.png'),
+			path:'/main_store',
+			open:false,
+			children:[{
+				name:'主体资料表',
+				icon:require('@/static/auth_setting.png'),
+				icon_active:require('@/static/auth_setting_active.png'),
+				path:'/main_info',
+				parent_index:4,
+				active:false
+			},{
+				name:'店铺基础授权资料',
+				icon:require('@/static/access_auth.png'),
+				icon_active:require('@/static/access_auth_active.png'),
+				path:'/basic_auth_info',
+				parent_index:4,
+				active:false
+			}]
 		}],												//导航列表
 		active_path:sessionStorage.getItem("activePath")?JSON.parse(sessionStorage.getItem("activePath")):'/product_audit',								//当前选中的菜单
 		tabsList:sessionStorage.getItem("tabsList")?JSON.parse(sessionStorage.getItem("tabsList")):[],												//当前已打开的菜单列表
 		domain:"",										//文件前缀
-		userInfo:null,									//用户信息
+		userInfo:{},									//用户信息
 		tableTotalWidth:0,								//表格可用宽度
 	},
 	mutations: {
@@ -78,7 +101,11 @@ const store = new Vuex.Store({
 			if(state.menuList[index].children){			//包含子菜单
 				state.menuList.map((menu_item,menu_index) => {
 					if(menu_item.children){
-						menu_item.open = menu_index == index;
+						if(menu_index == index){
+							menu_item.open = !menu_item.open;
+						}else{
+							menu_item.open = menu_index == index;
+						}
 					}
 				})
 			}else{								//不包含子菜单
