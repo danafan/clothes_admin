@@ -32,7 +32,7 @@
 					<SettingButton :img="require('@/static/create_icon.png')" text="添加品牌" @callback="addEditBrand('','add')"/>
 				</div>
 			</div>
-			<CustomTable tableName="brandAttribute" settingColumnWidth="180" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @buttonCallback="buttonCallback" @changeStatus="changeStatus" @addMember="addMember" @editFn="addEditBrand($event,'edit')" @deleteFn="deleteFn" @editCate="editCate"/>
+			<CustomTable tableName="brandAttribute" settingColumnWidth="180" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @buttonCallback="buttonCallback" @changeStatus="changeStatus" @addMember="addMember" @editFn="addEditBrand($event,'edit')" @deleteFn="deleteFn" @editCate="editCate" @editSeries="editSeries"/>
 		</div>
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
 		<!-- 添加成员 -->
@@ -178,8 +178,78 @@
 	<Pagination :page="category_page" :pagesize="category_pagesize" :total="category_total" @changePage="changeCategoryPage"/>
 </custom-dialog>
 <!-- 选择品类 -->
-<custom-dialog dialogTitle="选择品类" ref="checkCateDialog" @callback="editCateConfirm">
-	<div class="default_color f14 fw400">确定导出吗？</div>
+<custom-dialog dialogTitle="选择品类" dialogWidth="550px" ref="checkCateDialog" @close="closeCateDialog" @callback="editCateConfirm">
+	<div class="option_list flex flex-warp">
+		<div class="option_item pl16 pr16 mr8 mb16 active_option flex ac jc" v-for="(selected_item,index) in selected_category_list">
+			<div class="table_color f14 fw500 mr8">{{selected_item.category_name}}</div>
+			<img class="selected_close pointer" src="@/static/tab_close_active.png" @click="changeSelectedCate(selected_item,false)">
+		</div>
+	</div>
+	<div class="pt16 pb16">
+		<div class="flex ac mb16">
+			<div class="default_color f14 fw400">商品分类：</div>
+			<div class="search_box flex ac pl16">
+				<input class="search_input flex-1 f14 fw400" v-model="search_cate" placeholder="请搜索商品分类">
+				<div class="search_button f14 white_color fw400 ml16 pointer" @click="searchCate">搜索</div>
+			</div>
+		</div>
+		<div class="flex">
+			<div class="default_color f14 fw400 space-nowrap">全部品类：</div>
+			<div class="flex flex-warp">
+				<div class="table_color f14 fw400 mr16 pointer" :class="{'active_letter':letter_cate_index == index}" v-for="(item,index) in view_category_list" @click="setCateScrollTop(item.initial,index)">
+					{{item.initial}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="option_list" v-if="view_category_list.length > 0" id="cateOptionList">
+		<div v-for="(item,index) in view_category_list">
+			<div class="initial_color pt16 pb16 f16 bold" :id="item.initial">{{item.initial}}</div>
+			<div class="flex flex-warp">
+				<div class="option_item pl16 pr16 table_color f14 fw500 mr8 mb16 pointer" :class="{'active_option':option.selected}" @click="checkCateOptionStatus(index,o_i)" v-for="(option,o_i) in item.data">{{option.category_name}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="option_list flex ac jc" v-else>
+		<div class="default_color f14 fw400">暂无数据</div>
+	</div>
+</custom-dialog>
+<!-- 选择系列 -->
+<custom-dialog dialogTitle="选择系列" dialogWidth="550px" ref="checkSeriesDialog" @close="closeSeriesDialog" @callback="editSeriesConfirm">
+	<div class="option_list flex flex-warp">
+		<div class="option_item pl16 pr16 mr8 mb16 active_option flex ac jc" v-for="(selected_item,index) in selected_series_list">
+			<div class="table_color f14 fw500 mr8">{{selected_item.series_name}}</div>
+			<img class="selected_close pointer" src="@/static/tab_close_active.png" @click="changeSelectedSeries(selected_item,false)">
+		</div>
+	</div>
+	<div class="pt16 pb16">
+		<div class="flex ac mb16">
+			<div class="default_color f14 fw400">商品系列：</div>
+			<div class="search_box flex ac pl16">
+				<input class="search_input flex-1 f14 fw400" v-model="search_series" placeholder="请搜索商品系列">
+				<div class="search_button f14 white_color fw400 ml16 pointer" @click="searchSeries">搜索</div>
+			</div>
+		</div>
+		<div class="flex">
+			<div class="default_color f14 fw400 space-nowrap">全部系列：</div>
+			<div class="flex flex-warp">
+				<div class="table_color f14 fw400 mr16 pointer" :class="{'active_letter':letter_series_index == index}" v-for="(item,index) in view_series_list" @click="setSeriesScrollTop(item.initial,index)">
+					{{item.initial}}
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="option_list" v-if="view_series_list.length > 0" id="seriesOptionList">
+		<div v-for="(item,index) in view_series_list">
+			<div class="initial_color pt16 pb16 f16 bold" :id="item.initial">{{item.initial}}</div>
+			<div class="flex flex-warp">
+				<div class="option_item pl16 pr16 table_color f14 fw500 mr8 mb16 pointer" :class="{'active_option':option.selected}" @click="checkSeriesOptionStatus(index,o_i)" v-for="(option,o_i) in item.data">{{option.series_name}}</div>
+			</div>
+		</div>
+	</div>
+	<div class="option_list flex ac jc" v-else>
+		<div class="default_color f14 fw400">暂无数据</div>
+	</div>
 </custom-dialog>
 </div>
 </template>
@@ -229,8 +299,7 @@
 					prop:'category_num'
 				},{
 					label:'系列',
-					prop:'series_num',
-					type:4
+					prop:'series_num'
 				},{
 					label:'成员数量',
 					prop:'user_num',
@@ -268,7 +337,17 @@
 				series_total:0,
 				series_id:"",						//删除选中的系列ID
 				add_series_popover:false,			//添加系列弹窗
-				edit_brand_id:"",					//点击编辑品类的ID
+				edit_brand_id:"",					//点击编辑的ID
+				new_category_list:[],				//所有品类的待选列表
+				view_category_list:[],				//当前展示的品类的待选列表
+				selected_category_list:[],			//已选中的品类列表
+				letter_cate_index:0,				//当前选中的首字母
+				search_cate:"",						//商品分类搜索内容
+				new_series_list:[],					//所有系列的待选列表
+				view_series_list:[],				//当前展示的系列的待选列表
+				selected_series_list:[],			//已选中的系列列表
+				letter_series_index:0,				//当前选中的首字母
+				search_series:"",					//商品系列搜索内容
 			}
 		},
 		watch:{
@@ -662,20 +741,28 @@
 				resource.brandEditCategoryGet({brand_id:this.edit_brand_id}).then(res => {
 					if (res.data.code == 1) {
 						let data = res.data.data;
+						let selected_category_id = data.selected_category_id;
 						let category_list = data.category_list;
 						var map = {};
-						var new_category_list = [];
+						var old_category_list = [];
 						for (var i = 0; i < category_list.length; i++) {
+							if(selected_category_id.indexOf(category_list[i].category_id) > -1){
+								category_list[i]['selected'] = true;
+								this.changeSelectedCate(category_list[i],true);
+							}else{
+								category_list[i]['selected'] = false;
+							}
+							
 							var ai = category_list[i];
 							if (!map[ai.initial]) {
-								new_category_list.push({
-									initial:ai.initial,
+								old_category_list.push({
+									initial:!ai.initial?'#':ai.initial,
 									data: [ai]
 								});
 								map[ai.initial] = ai;
 							} else {
-								for (var j = 0; j < new_category_list.length; j++) {
-									var dj = new_category_list[j];
+								for (var j = 0; j < old_category_list.length; j++) {
+									var dj = old_category_list[j];
 									if (dj.initial == ai.initial) {
 										dj.data.push(ai);
 										break;
@@ -683,15 +770,271 @@
 								}
 							}
 						}
-						console.log(new_category_list);
+						if(old_category_list[0].initial == '#'){
+							let other_cate = JSON.parse(JSON.stringify(old_category_list[0]));
+							old_category_list.splice(0,1);
+							old_category_list.push(other_cate);
+						}
+						this.new_category_list = JSON.parse(JSON.stringify(old_category_list));
+						this.view_category_list = JSON.parse(JSON.stringify(old_category_list));
 					}else{
 						this.$message.warning(res.data.msg)
 					}
 				})
 			},
+			//点击切换品类选中状态
+			checkCateOptionStatus(index,o_i){
+				let current_option = JSON.parse(JSON.stringify(this.view_category_list[index]));
+				current_option.data[o_i].selected = !current_option.data[o_i].selected;
+				this.changeSelectedCate(current_option.data[o_i],current_option.data[o_i].selected)
+				this.$set(this.view_category_list,index,current_option);
+				// 处理全部
+				let new_category_list = JSON.parse(JSON.stringify(this.new_category_list));
+				let current_new_option_index = new_category_list.findIndex(item => {
+					return item.initial == current_option.initial;
+				})
+				let current_new_o_index = new_category_list[current_new_option_index].data.findIndex(item => {
+					return item.category_id == current_option.data[o_i].category_id;
+				})
+				new_category_list[current_new_option_index].data[current_new_o_index].selected = !new_category_list[current_new_option_index].data[current_new_o_index].selected
+				let new_category_option = new_category_list[current_new_option_index];
+				this.$set(this.new_category_list,current_new_option_index,new_category_option);
+			},
+			//处理已选中的品类
+			changeSelectedCate(cate,bool){
+				if(bool){
+					this.selected_category_list.push(cate);
+				}else{
+					let c_i = this.selected_category_list.findIndex(item => {
+						return item.category_id == cate.category_id;
+					})
+					this.selected_category_list.splice(c_i,1);
+
+					let view_category_list = JSON.parse(JSON.stringify(this.view_category_list));
+					var p_i = -1;
+					var o_i = -1;
+					view_category_list.map((item,index) => {
+						item.data.map((o,i) => {
+							if(cate.category_id == o.category_id){
+								p_i = index;
+								o_i = i;
+							}
+						})
+					})
+					view_category_list[p_i].data[o_i].selected = false;
+					this.$set(this.view_category_list,p_i,view_category_list[p_i]);
+					// 处理全部
+					let new_category_list = JSON.parse(JSON.stringify(this.new_category_list));
+					let current_new_option_index = new_category_list.findIndex(item => {
+						return item.initial == view_category_list[p_i].initial;
+					})
+					let current_new_o_index = new_category_list[current_new_option_index].data.findIndex(item => {
+						return item.category_id == view_category_list[p_i].data[o_i].category_id;
+					})
+					new_category_list[current_new_option_index].data[current_new_o_index].selected = false;
+					let new_category_option = new_category_list[current_new_option_index];
+					this.$set(this.new_category_list,current_new_option_index,new_category_option);
+				}
+			},
+			//点击搜索分类
+			searchCate(){
+				if(this.search_cate == ''){
+					this.view_category_list = JSON.parse(JSON.stringify(this.new_category_list));
+				}else{
+					this.view_category_list = [];
+					let new_category_list = JSON.parse(JSON.stringify(this.new_category_list));
+					new_category_list.map(item => {
+						let new_data = item.data.filter(o => {
+							return o.category_name.indexOf(this.search_cate) > -1;
+						})
+						if(new_data.length > 0){
+							item.data = new_data;
+							this.view_category_list.push(item)
+						}
+					})
+				}
+			},
+			//点击定位
+			setCateScrollTop(id,index){
+				document.getElementById('cateOptionList').scrollTop = document.getElementById(id).offsetTop - 276;
+				this.letter_cate_index = index;
+			},
+			//监听关闭编辑品类弹窗
+			closeCateDialog(){
+				this.selected_category_list = [];
+				document.getElementById('cateOptionList').scrollTop = 0;
+				this.letter_cate_index = 0;
+			},
 			//编辑品类提交
 			editCateConfirm(){
+				let arg = {
+					brand_id:this.edit_brand_id
+				}
+				let category_ids = this.selected_category_list.map(item => {
+					return item.category_id
+				})
+				arg['category_id'] = category_ids.join(',');
+				resource.brandEditCategoryPost(arg).then(res => {
+					if (res.data.code == 1) {
+						this.$message.success(res.data.msg);
+						this.$refs.checkCateDialog.show_dialog = false;
+						//获取列表
+						this.getData();
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//点击编辑系列
+			editSeries(brand_id){
+				this.edit_brand_id = brand_id;
+				this.$refs.checkSeriesDialog.show_dialog = true;
+				resource.brandEditSeriesGet({brand_id:this.edit_brand_id}).then(res => {
+					if (res.data.code == 1) {
+						let data = res.data.data;
+						let selected_series_id = data.selected_series_id;
+						let series_list = data.series_list;
+						var map = {};
+						var old_series_list = [];
+						for (var i = 0; i < series_list.length; i++) {
+							if(selected_series_id.indexOf(series_list[i].series_id) > -1){
+								series_list[i]['selected'] = true;
+								this.changeSelectedSeries(series_list[i],true);
+							}else{
+								series_list[i]['selected'] = false;
+							}
+							
+							var ai = series_list[i];
+							if (!map[ai.initial]) {
+								old_series_list.push({
+									initial:!ai.initial?'#':ai.initial,
+									data: [ai]
+								});
+								map[ai.initial] = ai;
+							} else {
+								for (var j = 0; j < old_series_list.length; j++) {
+									var dj = old_series_list[j];
+									if (dj.initial == ai.initial) {
+										dj.data.push(ai);
+										break;
+									}
+								}
+							}
+						}
+						if(old_series_list[0].initial == '#'){
+							let other_series = JSON.parse(JSON.stringify(old_series_list[0]));
+							old_series_list.splice(0,1);
+							old_series_list.push(other_series);
+						}
+						this.new_series_list = JSON.parse(JSON.stringify(old_series_list));
+						this.view_series_list = JSON.parse(JSON.stringify(old_series_list));
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
+			},
+			//点击切换系列选中状态
+			checkSeriesOptionStatus(index,o_i){
+				let current_option = JSON.parse(JSON.stringify(this.view_series_list[index]));
+				current_option.data[o_i].selected = !current_option.data[o_i].selected;
+				this.changeSelectedSeries(current_option.data[o_i],current_option.data[o_i].selected)
+				this.$set(this.view_series_list,index,current_option);
+				// 处理全部
+				let new_series_list = JSON.parse(JSON.stringify(this.new_series_list));
+				let current_new_option_index = new_series_list.findIndex(item => {
+					return item.initial == current_option.initial;
+				})
+				let current_new_o_index = new_series_list[current_new_option_index].data.findIndex(item => {
+					return item.series_id == current_option.data[o_i].series_id;
+				})
+				new_series_list[current_new_option_index].data[current_new_o_index].selected = !new_series_list[current_new_option_index].data[current_new_o_index].selected
+				let new_series_option = new_series_list[current_new_option_index];
+				this.$set(this.new_series_list,current_new_option_index,new_series_option);
+			},
+			//处理已选中的系列
+			changeSelectedSeries(series,bool){
+				if(bool){
+					this.selected_series_list.push(series);
+				}else{
+					let c_i = this.selected_series_list.findIndex(item => {
+						return item.series_id == series.series_id;
+					})
+					this.selected_series_list.splice(c_i,1);
 
+					let view_series_list = JSON.parse(JSON.stringify(this.view_series_list));
+					var p_i = -1;
+					var o_i = -1;
+					view_series_list.map((item,index) => {
+						item.data.map((o,i) => {
+							if(series.series_id == o.series_id){
+								p_i = index;
+								o_i = i;
+							}
+						})
+					})
+					view_series_list[p_i].data[o_i].selected = false;
+					this.$set(this.view_series_list,p_i,view_series_list[p_i]);
+					// 处理全部
+					let new_series_list = JSON.parse(JSON.stringify(this.new_series_list));
+					let current_new_option_index = new_series_list.findIndex(item => {
+						return item.initial == view_series_list[p_i].initial;
+					})
+					let current_new_o_index = new_series_list[current_new_option_index].data.findIndex(item => {
+						return item.series_id == view_series_list[p_i].data[o_i].series_id;
+					})
+					new_series_list[current_new_option_index].data[current_new_o_index].selected = false;
+					let new_series_option = new_series_list[current_new_option_index];
+					this.$set(this.new_series_list,current_new_option_index,new_series_option);
+				}
+			},
+			//点击搜索系列
+			searchSeries(){
+				if(this.search_series == ''){
+					this.view_series_list = JSON.parse(JSON.stringify(this.new_series_list));
+				}else{
+					this.view_series_list = [];
+					let new_series_list = JSON.parse(JSON.stringify(this.new_series_list));
+					new_series_list.map(item => {
+						let new_data = item.data.filter(o => {
+							return o.series_name.indexOf(this.search_series) > -1;
+						})
+						if(new_data.length > 0){
+							item.data = new_data;
+							this.view_series_list.push(item)
+						}
+					})
+				}
+			},
+			//点击定位
+			setSeriesScrollTop(id,index){
+				document.getElementById('seriesOptionList').scrollTop = document.getElementById(id).offsetTop - 276;
+				this.letter_series_index = index;
+			},
+			//监听关闭编辑品类弹窗
+			closeSeriesDialog(){
+				this.selected_series_list = [];
+				document.getElementById('seriesOptionList').scrollTop = 0;
+				this.letter_series_index = 0;
+			},
+			//编辑品类提交
+			editSeriesConfirm(){
+				let arg = {
+					brand_id:this.edit_brand_id
+				}
+				let series_ids = this.selected_series_list.map(item => {
+					return item.series_id
+				})
+				arg['series_id'] = series_ids.join(',');
+				resource.brandEditSeriesPost(arg).then(res => {
+					if (res.data.code == 1) {
+						this.$message.success(res.data.msg);
+						this.$refs.checkSeriesDialog.show_dialog = false;
+						//获取列表
+						this.getData();
+					}else{
+						this.$message.warning(res.data.msg)
+					}
+				})
 			},
 			//监听排序
 			sortChange(v){
@@ -727,5 +1070,49 @@
 		font-weight: 500;
 		color: #609DFF;
 		white-space: nowrap;
+	}
+	.active_letter{
+		color: #5E9CFF;
+	}
+	.initial_color{
+		color: #515A68;
+	}
+	.option_list{
+		max-height: 260px;
+		overflow-y: scroll;
+	}
+	.option_item{
+		border: 1px solid #ffffff;
+		min-width: 90px;
+		height: 46px;
+		line-height: 46px;
+		text-align: center;
+	}
+	.selected_close{
+		width: 7px;
+		height: 7px;
+	}
+	.active_option{
+		border: 1px solid #609DFF;
+		background: #EBF3FF;
+	}
+	.search_box{
+		width: 280px;
+		height: 48px;
+		background: #F7F8FA;
+		border-radius: 12px;
+		.search_input{
+			background: #F7F8FA;
+			border: none;
+			outline: none;
+		}
+		.search_button{
+			width: 60px;
+			text-align: center;
+			height: 40px;
+			line-height: 40px;
+			background: #5E9CFF;
+			border-radius: 20px;
+		}
 	}
 </style>

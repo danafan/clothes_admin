@@ -27,6 +27,8 @@
 					<span class="text_style" v-else-if="item.type == 4" @click="$emit('buttonCallback',scope.row)">{{scope.row[item.prop]}}</span>
 					<!-- 品牌属性库编辑品类 -->
 					<span class="text_style" v-else-if="tableName == 'brandAttribute' && item.prop == 'category_num'" @click="$emit('editCate',scope.row.brand_id)">{{scope.row[item.prop]}}</span>
+					<!-- 品牌属性库编辑系列 -->
+					<span class="text_style" v-else-if="tableName == 'brandAttribute' && item.prop == 'series_num'" @click="$emit('editSeries',scope.row.brand_id)">{{scope.row[item.prop]}}</span>
 					<!-- 开关 -->
 					<el-switch v-else-if="item.type == 5" :active-value="1" :inactive-value="0" v-model="scope.row[item.prop]" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeStatus">
 					</el-switch>
