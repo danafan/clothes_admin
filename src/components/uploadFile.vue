@@ -1,21 +1,13 @@
 <template>
 	<div class="upload_file_container relative">
 		<div class="upload_file flex ac" :class="{'z9':fileName != ''}">
-			<div class="flex ac">
-				<img class="file_icon" src="@/static/file_icon.png">
-				<el-tooltip class="item" effect="dark" :content="fileName" placement="top">
-					<div class="upload_text default_color f14 fw400">{{fileName?fileName:'选择上传文件'}}</div>
-				</el-tooltip>
-			</div>
+			<img class="file_icon" src="@/static/file_icon.png">
+			<el-tooltip class="item" effect="dark" :content="fileName" placement="top">
+				<div class="flex-1 f14 fw400" :class="[{'upload_text':!fileName},{'value_color':fileName}]">{{fileName?fileName:'选择上传文件'}}</div>
+			</el-tooltip>
 			<img class="delete_file pointer" src="@/static/delete_file.png" @click="deleteFile" v-if="fileName">
 		</div>
-		<input type="file" ref="uploadFile" class="upload_file_input" :class="{'z9':fileName == ''}" 
-		accept="application/vnd.ms-excel, 
-		application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,
-		application/vnd.ms-powerpoint,
-		application/vnd.openxmlformats-officedocument.presentationml.presentation,
-		application/pdf
-		" @change="uploadFile">
+		<input type="file" ref="uploadFile" class="upload_file_input" :class="{'z9':fileName == ''}" :accept="accept" @change="uploadFile" v-if="!onlyView">
 		<div class="toast default_color f12 fw400">{{toast}}</div>
 	</div>
 </template>
@@ -25,6 +17,7 @@
 		data(){
 			return{
 				upload_loading:false,					//上传中
+				accept:'application/pdf',
 			}
 		},
 		props:{
@@ -32,6 +25,11 @@
 			fileName:{
 				type:String,
 			default:''
+			},
+			//是否只读
+			onlyView:{
+				type:Boolean,
+			default:false
 			},
 			//底部提示
 			toast:{
@@ -43,6 +41,26 @@
 				type:Boolean,
 			default:true
 			},
+			//上传文件类型
+			fileType:{
+				type:String,
+			default:'pdf'
+			}
+		},
+		watch:{
+			//监听文件类型变化
+			fileType:function(n,o){
+				switch(n){
+				case 'pdf':
+					this.accept = 'application/pdf';
+					break;
+				case 'excel':
+					this.accept = 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+					break;
+				default:
+					return;
+				}
+			}
 		},
 		computed:{
 			//文件前缀
@@ -93,10 +111,10 @@
 </script>
 <style lang="less" scoped>
 	.upload_file_container{
-		width: 280px;
-		height: 48px;
+		width: 186px;
+		height: 32px;
 		background: #F7F8FA;
-		border-radius: 12px;
+		border-radius: 8px;
 	}
 	.upload_file{
 		position: absolute;
@@ -105,21 +123,24 @@
 		width: 100%;
 		height: 100%;
 		padding-left: 16px;
-		padding-right: 16px;
+		padding-right: 8px;
 		.file_icon{
 			margin-right: 12px;
-			width: 22px;
-			height: 17px;
+			width: 17.6px;
+			height: 13.6px;
 		}
 		.upload_text{
-			width: 190px;
+			color: #C1C4CB;
+		}
+		.value_color{
+			color: #606266;
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow:ellipsis;
 		}
 		.delete_file{
-			width: 18px;
-			height: 18px;
+			width: 14.4px;
+			height: 14.4px;
 		}
 	}
 	.toast{
@@ -142,4 +163,5 @@
 	.z9{
 		z-index:9;
 	}
+
 </style>

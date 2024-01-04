@@ -1010,13 +1010,13 @@
 				document.getElementById('seriesOptionList').scrollTop = document.getElementById(id).offsetTop - 276;
 				this.letter_series_index = index;
 			},
-			//监听关闭编辑品类弹窗
+			//监听关闭编辑系列弹窗
 			closeSeriesDialog(){
 				this.selected_series_list = [];
 				document.getElementById('seriesOptionList').scrollTop = 0;
 				this.letter_series_index = 0;
 			},
-			//编辑品类提交
+			//编辑系列提交
 			editSeriesConfirm(){
 				let arg = {
 					brand_id:this.edit_brand_id

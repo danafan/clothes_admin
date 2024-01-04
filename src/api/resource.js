@@ -36,6 +36,10 @@ let path = {
 	adminSeriesAdd:'api/series/add',					//添加系列
 	brandEditCategory:'api/brand/category',				//点击编辑选中的品类（详情或提交）
 	brandEditSeries:'api/brand/series',					//点击编辑选中的系列（详情或提交）
+	//主体
+	ajaxParams:'api/company_main_body/ajax_params',		//获取所有下拉框数据
+	companyMainBodyList:'api/company_main_body/list',	//公司主体资料表
+	companyMainBodyAdd:'api/company_main_body/add',		//添加公司主体
 	//权限
 	accessList:'api/access/accesslist',					//权限录入列表
 	getMainMenus:'api/access/getmainmenus',				//获取所属菜单列表
@@ -298,6 +302,18 @@ export default{
 	//编辑系列提交
 	brandEditSeriesPost(params){
 		return http.post(path.brandEditSeries, params)
+	},
+	//获取所有下拉框数据
+	ajaxParams(params){
+		return http.get(path.ajaxParams, params)
+	},
+	//公司主体资料表
+	companyMainBodyList(params){
+		return http.get(path.companyMainBodyList, params)
+	},
+	//添加公司主体
+	companyMainBodyAdd(params){
+		return http.post(path.companyMainBodyAdd, params)
 	},
 	
 }
