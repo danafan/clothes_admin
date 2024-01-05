@@ -45,6 +45,22 @@ let path = {
 	companyMainBodyInfo:'api/company_main_body/info',	//获取主体详情
 	mainBodyInfoExport:'api/company_main_body/export',	//公司主体资料表导出
 	mainBodyInfoImport:'api/company_main_body/import_company',	//公司主体资料表导入
+	shopList:'api/company_main_body/shop_list',			//店铺基础授权资料
+	importShop:'api/company_main_body/import_shop',		//店铺基础授权资料导入
+	shopExport:'api/company_main_body/shop_export',		//店铺基础授权资料导出
+	addShop:'api/company_main_body/add_shop',			//创建店铺基础授权资料
+	editShop:'api/company_main_body/edit_shop',			//编辑店铺基础授权资料
+	shopInfo:'api/company_main_body/shop_info',			//店铺基础授权资料详情
+	transferMian:'api/company_main_body/transfer',		//转移主体
+	changeList:'api/company_main_body/change_list',		//获取主体变更记录
+	customList:'api/company_main_body/custom_list',		//客户列表
+	customExport:'api/company_main_body/custom_export',	//客户列表导出
+	addCustom:'api/company_main_body/add_custom',		//添加客户资料
+	editCustom:'api/company_main_body/edit_custom',		//编辑客户资料
+	customUsers:'api/company_main_body/custom_users',	//客户成员表
+	addCustomUser:'api/company_main_body/add_custom_user',	//客户添加成员
+	customCompany:'api/company_main_body/custom_company',	//客户主体表
+
 	//权限
 	accessList:'api/access/accesslist',					//权限录入列表
 	getMainMenus:'api/access/getmainmenus',				//获取所属菜单列表
@@ -343,6 +359,74 @@ export default{
 	//公司主体资料表导入
 	mainBodyInfoImport(params){
 		return http.post(path.mainBodyInfoImport, params)
+	},
+	//店铺基础授权资料
+	shopList(params){
+		return http.get(path.shopList, params)
+	},
+	//店铺基础授权资料导入
+	importShop(params){
+		return http.post(path.importShop, params)
+	},
+	//店铺基础授权资料导出
+	shopExport(params){
+		return http.post(path.shopExport, params)
+	},
+	//创建前获取店铺基础授权资料
+	addShop(params){
+		return http.post(path.addShop, params)
+	},
+	//编辑前获取店铺基础授权资料
+	editShopGet(params){
+		return http.get(path.editShop, params)
+	},
+	//编辑店铺基础授权资料提交
+	editShopPost(params){
+		return http.post(path.editShop, params)
+	},
+	//店铺基础授权资料详情
+	shopInfo(params){
+		return http.get(path.shopInfo, params)
+	},
+	//转移主体
+	transferMian(params){
+		return http.post(path.transferMian, params)
+	},
+	//主体变更记录
+	changeList(params){
+		return http.get(path.changeList, params)
+	},
+	//客户列表
+	customList(params){
+		return http.get(path.customList, params)
+	},
+	//客户列表导出
+	customExport(params){
+		return http.post(path.customExport, params)
+	},
+	//添加客户资料
+	addCustom(params){
+		return http.post(path.addCustom, params)
+	},
+	//编辑前获取客户资料
+	editCustomGet(params){
+		return http.get(path.editCustom, params)
+	},
+	//编辑客户资料提交
+	editCustomPost(params){
+		return http.post(path.editCustom, params)
+	},
+	//客户成员表
+	customUsers(params){
+		return http.get(path.customUsers, params)
+	},
+	//客户添加成员
+	addCustomUser(params){
+		return http.post(path.addCustomUser, params)
+	},
+	//客户主体表
+	customCompany(params){
+		return http.get(path.customCompany, params)
 	},
 	
 }

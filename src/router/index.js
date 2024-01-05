@@ -11,6 +11,7 @@ const access_authority = (resolve) => require(["@/pages/permission/access_author
 const auth_enter = (resolve) => require(["@/pages/permission/auth_enter"], resolve);
 const main_info = (resolve) => require(["@/pages/mainStore/main_info"], resolve);
 const basic_auth_info = (resolve) => require(["@/pages/mainStore/basic_auth_info"], resolve);
+const customer_data = (resolve) => require(["@/pages/mainStore/customer_data"], resolve);
 
 
 Vue.use(Router);
@@ -59,6 +60,10 @@ const router = new Router({
 			path: "/basic_auth_info",
 			name: "店铺基础授权资料",
 			component: basic_auth_info
+		},{
+			path: "/customer_data",
+			name: "客户资料",
+			component: customer_data
 		}
 		],
 	},

@@ -10,7 +10,7 @@
 					<!-- 普通图片 -->
 					<el-image class="relative" style="top: 3px;" :z-index="2006" :src="domain + scope.row[item.prop]" fit="scale-down" @click="viewImage('only',scope.row[item.prop],scope.row)" v-if="item.type == 1"></el-image>
 					<!-- 轮播图片 -->
-					<div class="table_carousel relative" v-else-if="item.type == 2">
+					<div class="table_carousel relative" v-else-if="item.type == 2 && scope.row[item.prop]">
 						<el-carousel class="el_carousel" :ref="`${tableName}_${item.prop}_${scope.$index}`" arrow="never" indicator-position="none" :autoplay="false" height="110px">
 							<el-carousel-item v-for="(img_url,index) in scope.row[item.prop]" :key="index">
 								<el-image :z-index="2006" :src="domain + img_url" @click="viewImage('arr',scope.row[item.prop],scope.row,item.label,index)" fit="scale-down"></el-image>
@@ -22,9 +22,9 @@
 						</div>
 					</div>
 					<!-- 预览按钮 -->
-					<span class="text_style" v-else-if="item.type == 3" @click="openWindow(scope.row[item.prop])">预览</span>
+					<span class="text_style" v-else-if="item.type == 3 && scope.row[item.prop]" @click="openWindow(scope.row[item.prop])">预览</span>
 					<!-- 按钮 -->
-					<span class="text_style" v-else-if="item.type == 4" @click="$emit('buttonCallback',scope.row)">{{scope.row[item.prop]}}</span>
+					<span class="text_style" v-else-if="item.type == 4" @click="buttonCallback(scope.row,item.prop)">{{scope.row[item.prop]}}</span>
 					<!-- 品牌属性库编辑品类 -->
 					<span class="text_style" v-else-if="tableName == 'brandAttribute' && item.prop == 'category_num'" @click="$emit('editCate',scope.row.brand_id)">{{scope.row[item.prop]}}</span>
 					<!-- 品牌属性库编辑系列 -->
@@ -40,10 +40,11 @@
 			<el-table-column label="操作" align="center" :width="settingColumnWidth" :fixed="set_column_fixed?'right':false" v-if="Setting">
 				<template slot-scope="scope">
 					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
-					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
-					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting' || tableName == 'mainInfo'">编辑</span>
-					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority' || tableName == 'mainInfo'">查看</span>
+					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'customerData'">添加成员</span>
+					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting' || tableName == 'mainInfo' || tableName == 'basicAuthInfo' || tableName == 'customerData'">编辑</span>
+					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority' || tableName == 'mainInfo' || tableName == 'basicAuthInfo'">查看</span>
 					<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority'">删除</span>
+					<span class="text_style" @click="$emit('transferFn',scope.row)" v-if="tableName == 'basicAuthInfo'">转移主体</span>
 				</template>
 			</el-table-column>
 		</el-table>
@@ -181,6 +182,14 @@
 					this.preview_images = [preview_src];
 				}
 				this.$refs.previewImagesDialog.show_dialog = true;
+			},
+			//点击按钮
+			buttonCallback(row,prop){
+				let arg = {
+					row:row,
+					prop:prop
+				}
+				this.$emit('buttonCallback',arg);
 			},
 			//监听排序
 			sortChange({ column, prop, order }){

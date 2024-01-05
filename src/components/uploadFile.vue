@@ -3,7 +3,7 @@
 		<div class="upload_file flex ac" :class="{'z9':fileName != ''}">
 			<img class="file_icon" src="@/static/file_icon.png">
 			<el-tooltip class="item" effect="dark" :content="fileName" placement="top">
-				<div class="flex-1 f14 fw400" :class="[{'upload_text':!fileName},{'value_color':fileName}]">{{fileName?fileName:'选择上传文件'}}</div>
+				<div class="flex-1 f14 fw400 pointer" :class="[{'upload_text':!fileName},{'value_color':fileName}]" @click="viewFile">{{fileName?fileName:!onlyView?'选择上传文件':'未上传'}}</div>
 			</el-tooltip>
 			<img class="delete_file pointer" src="@/static/delete_file.png" @click="deleteFile" v-if="fileName && !onlyView">
 		</div>
@@ -105,7 +105,13 @@
 					//向父组件传递已选的图片列表
 					this.$emit('callback','');
 				}
-			}
+			},
+			//文件预览
+			viewFile(){
+				if(this.onlyView && this.fileName != ''){
+					window.open(this.domain + this.fileName)
+				}
+			},
 		}
 	}
 </script>

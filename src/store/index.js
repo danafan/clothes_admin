@@ -70,6 +70,13 @@ const store = new Vuex.Store({
 			path:'/main_store',
 			open:false,
 			children:[{
+				name:'客户资料表',
+				icon:require('@/static/auth_setting.png'),
+				icon_active:require('@/static/auth_setting_active.png'),
+				path:'/customer_data',
+				parent_index:4,
+				active:false
+			},{
 				name:'主体资料表',
 				icon:require('@/static/auth_setting.png'),
 				icon_active:require('@/static/auth_setting_active.png'),

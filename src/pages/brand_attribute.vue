@@ -405,9 +405,9 @@
 				this.getData();
 			},
 			//点击成员数量
-			buttonCallback(row){
-				this.brand_id = row.brand_id;
-				this.view_brand_name = row.brand_name;
+			buttonCallback(arg){
+				this.brand_id = arg.row.brand_id;
+				this.view_brand_name = arg.row.brand_name;
 				this.$refs.userListDialog.show_dialog = true;
 				//获取品牌成员
 				this.getUserData();

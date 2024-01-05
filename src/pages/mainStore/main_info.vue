@@ -38,7 +38,7 @@
 		</div>
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
 		<!-- 添加/编辑/详情 -->
-		<custom-dialog :dialogTitle="dialog_title" dialogWidth="1420px" ref="addEditDialog" @close="clearForm" @callback="addEditConfirm">
+		<custom-dialog :dialogTitle="dialog_title" dialogWidth="1400px" ref="addEditDialog" @close="clearForm" @callback="addEditConfirm">
 			<el-form class="demo-form-inline dialog_form" style="height: 460px;" :inline="true" label-width="148px">
 				<el-form-item label="主体类型：" v-if="filterShow('main_body_type')">
 					<div class="detail_value" v-if="dialog_type == 'detail'">{{detail_data.main_body_type}}</div>
@@ -408,8 +408,8 @@
 						let data = res.data.data.table_data;
 						this.tableData = data.data;
 						this.tableData.map(item => {
-							item['business_license_url'] = item.business_license_url.split(',');
-							item['id_card_url'] = item.id_card_url.split(',');
+							item['business_license_url'] = item.business_license_url?item.business_license_url.split(','):'';
+							item['id_card_url'] = item.id_card_url?item.id_card_url.split(','):'';
 						})
 						this.total = data.total;
 					}else{
@@ -547,6 +547,7 @@
 				resource.mainBodyInfoExport(arg).then(res => {
 					if(res){
 						exportPost("\ufeff" + res.data,'公司主体资料表','csv');
+						this.$refs.exportDialog.show_dialog = false;
 					}
 				})
 			},
@@ -586,6 +587,7 @@
 </script>
 <style lang="less" scoped>
 	.detail_value{
+		color: #718096;
 		width: 186px;
 	}
 </style>

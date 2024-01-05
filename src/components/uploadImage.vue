@@ -6,16 +6,17 @@
 				<img class="delete_image pointer" src="@/static/delete_image.png" @click="deleteFile(item,index)">
 			</div>
 		</div>
-		<div class="upload_box flex fc ac jc" v-if="imagesData.length < maxNum">
+		<div class="upload_box flex fc ac jc" v-if="imagesData.length < maxNum && !onlyView">
 			<img class="upload_image" src="@/static/upload_image.png">
 			<div class="default_color f14 fw400">{{text}}</div>
 			<input type="file" ref="imgUpload" class="upload_file" accept="image/*" :multiple="maxNum > 1" @change="uploadFn">
 		</div>
+		<div class="default_color f14 fw400" v-if="onlyView && imagesData.length == 0">未上传</div>
 	</div>
 </template>
 <style lang="less" scoped>
 	.image_list {
-		flex:1;
+		min-width: 186px;
 		display: flex;
 		flex-wrap: wrap;
 		.image_card {

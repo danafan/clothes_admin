@@ -234,9 +234,9 @@
 				this.getData();
 			},
 			//点击成员数量
-			buttonCallback(row){
-				this.supplier_id = row.supplier_id;
-				this.view_supplier_name = row.supplier_name;
+			buttonCallback(arg){
+				this.supplier_id = arg.row.supplier_id;
+				this.view_supplier_name = arg.row.supplier_name;
 				this.$refs.userListDialog.show_dialog = true;
 				//获取供应商成员
 				this.getUserData();

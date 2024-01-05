@@ -322,9 +322,9 @@
 				})
 			},
 			//点击成员数量
-			buttonCallback(row){
-				this.menu_role_id = row.menu_role_id;
-				this.role_user_dialog_title = row.menu_role_name;
+			buttonCallback(arg){
+				this.menu_role_id = arg.row.menu_role_id;
+				this.role_user_dialog_title = arg.row.menu_role_name;
 				this.$refs.userListDialog.show_dialog = true;
 				//获取角色下用户列表
 				this.getUserData();
