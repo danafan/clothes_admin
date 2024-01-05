@@ -40,6 +40,11 @@ let path = {
 	ajaxParams:'api/company_main_body/ajax_params',		//获取所有下拉框数据
 	companyMainBodyList:'api/company_main_body/list',	//公司主体资料表
 	companyMainBodyAdd:'api/company_main_body/add',		//添加公司主体
+	companyMainBodyEdit:'api/company_main_body/edit',	//编辑公司主体
+	ajaxCompany:'api/company_main_body/ajax_company',	//获取客户列表
+	companyMainBodyInfo:'api/company_main_body/info',	//获取主体详情
+	mainBodyInfoExport:'api/company_main_body/export',	//公司主体资料表导出
+	mainBodyInfoImport:'api/company_main_body/import_company',	//公司主体资料表导入
 	//权限
 	accessList:'api/access/accesslist',					//权限录入列表
 	getMainMenus:'api/access/getmainmenus',				//获取所属菜单列表
@@ -314,6 +319,30 @@ export default{
 	//添加公司主体
 	companyMainBodyAdd(params){
 		return http.post(path.companyMainBodyAdd, params)
+	},
+	//编辑前获取公司主体信息
+	companyMainBodyEditGet(params){
+		return http.get(path.companyMainBodyEdit, params)
+	},
+	//编辑公司主体
+	companyMainBodyEditPost(params){
+		return http.post(path.companyMainBodyEdit, params)
+	},
+	//获取客户列表
+	ajaxCompany(params){
+		return http.get(path.ajaxCompany, params)
+	},
+	//获取主体详情
+	companyMainBodyInfo(params){
+		return http.get(path.companyMainBodyInfo, params)
+	},
+	//公司主体资料表导出
+	mainBodyInfoExport(params){
+		return http.post(path.mainBodyInfoExport, params)
+	},
+	//公司主体资料表导入
+	mainBodyInfoImport(params){
+		return http.post(path.mainBodyInfoImport, params)
 	},
 	
 }

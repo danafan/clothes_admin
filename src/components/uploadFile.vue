@@ -5,7 +5,7 @@
 			<el-tooltip class="item" effect="dark" :content="fileName" placement="top">
 				<div class="flex-1 f14 fw400" :class="[{'upload_text':!fileName},{'value_color':fileName}]">{{fileName?fileName:'选择上传文件'}}</div>
 			</el-tooltip>
-			<img class="delete_file pointer" src="@/static/delete_file.png" @click="deleteFile" v-if="fileName">
+			<img class="delete_file pointer" src="@/static/delete_file.png" @click="deleteFile" v-if="fileName && !onlyView">
 		</div>
 		<input type="file" ref="uploadFile" class="upload_file_input" :class="{'z9':fileName == ''}" :accept="accept" @change="uploadFile" v-if="!onlyView">
 		<div class="toast default_color f12 fw400">{{toast}}</div>

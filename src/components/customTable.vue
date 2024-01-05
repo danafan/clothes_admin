@@ -13,7 +13,7 @@
 					<div class="table_carousel relative" v-else-if="item.type == 2">
 						<el-carousel class="el_carousel" :ref="`${tableName}_${item.prop}_${scope.$index}`" arrow="never" indicator-position="none" :autoplay="false" height="110px">
 							<el-carousel-item v-for="(img_url,index) in scope.row[item.prop]" :key="index">
-								<el-image :z-index="2006" :src="domain + img_url" @click="viewImage('arr',scope.row[item.prop],scope.row,index)" fit="scale-down"></el-image>
+								<el-image :z-index="2006" :src="domain + img_url" @click="viewImage('arr',scope.row[item.prop],scope.row,item.label,index)" fit="scale-down"></el-image>
 							</el-carousel-item>
 						</el-carousel>
 						<div class="carousel_arrow_row flex ac jsb">
@@ -41,8 +41,8 @@
 				<template slot-scope="scope">
 					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
 					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute'">添加成员</span>
-					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting'">编辑</span>
-					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority'">查看</span>
+					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting' || tableName == 'mainInfo'">编辑</span>
+					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority' || tableName == 'mainInfo'">查看</span>
 					<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority'">删除</span>
 				</template>
 			</el-table-column>
@@ -163,8 +163,16 @@
 				}
 			},
 			//点击图片预览
-			viewImage(type,preview_src,row,initial_index){
-				this.dialog_title = this.tableName == 'brandAttribute'?row.brand_name:row.goods_name;
+			viewImage(type,preview_src,row,label,initial_index){
+				//处理图片放大标题
+				if(this.tableName == 'brandAttribute'){		//品牌属性库
+					this.dialog_title = row.brand_name;
+				}else if(this.tableName == 'productAudit'){	//商品资料审核
+					this.dialog_title = row.goods_name;
+				}else if(this.tableName == 'mainInfo'){		//店铺主体资料
+					this.dialog_title = label;
+				}
+
 				if(type == 'arr'){
 					this.initial_index = initial_index;
 					this.preview_images = preview_src;
