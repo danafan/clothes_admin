@@ -13,6 +13,7 @@ module.exports = defineConfig({
     webSocketServer:false,
     port: '7878'
   },
+  assetsDir: "clothes_admin",
 })
 
 // const path = require('path');

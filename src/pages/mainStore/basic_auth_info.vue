@@ -239,8 +239,8 @@
 			</el-form>
 		</custom-dialog>
 		<!-- 主体变更记录 -->
-		<custom-dialog dialogTitle="主体变更记录" dialogWidth="1200px" ref="logDialog">
-			<CustomTable tableName="changeLog" :tableHeight="500" :titleList="log_title_list" :tableData="change_log" :loading="log_loading" :selection="false"/>
+		<custom-dialog dialogTitle="主体变更记录" dialogWidth="1200px" ref="logDialog" :showConfirm="false" cancelText="关闭">
+			<CustomTable tableName="changeLog" :selection="false" :index="false" :Setting="false" :tableHeight="500" :titleList="logTitleList" :tableData="changeLogData"/>
 		</custom-dialog>
 	</div>
 </template>
@@ -447,7 +447,7 @@
 				company_id:"",						 //点击的公司主体ID
 				company_shop_id:"",
 				log_loading:false,
-				log_title_list:[
+				logTitleList:[
 				{
 					label:'序号',
 					prop:'index'
@@ -486,15 +486,17 @@
 					prop:'operator_gender_value'
 				},{
 					label:'营业执照',
-					prop:'business_license_url'
+					prop:'business_license_url',
+					type:2
 				},{
 					label:'身份证',
-					prop:'id_card_url'
+					prop:'id_card_url',
+					type:2
 				},{
 					label:'变更时间',
 					prop:'add_time'
-				}],				   //变更记录列表表头
-				change_log:[],						 //主体变更记录
+				}],				   						 //变更记录列表表头
+				changeLogData:[],						 //主体变更记录
 			}
 		},
 		watch:{
@@ -814,7 +816,7 @@
 							delete new_item.new_info;
 							change_log.push(new_item);
 						})
-						this.change_log = change_log;
+						this.changeLogData = change_log;
 					}else{
 						this.$message.warning(res.data.msg);
 					}

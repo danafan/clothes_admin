@@ -1,9 +1,9 @@
 <template>
-	<div class="relative">
+	<div class="relative" :style="{'height':`${tableHeight}px`}">
 		<el-table ref="customTable" class="custom_table" :height="tableHeight" :data="tableData" :header-cell-style="{'background':'#E2EAFF','height':'88px','color':'#4E5969','font-size':'14px'}" :fit="false" @sort-change="sortChange" @selection-change="selectionChange" v-loading="loading" border>
 			<el-table-column fixed align="center" type="selection" width="48" v-if="selection">
 			</el-table-column>
-			<el-table-column fixed label="序号" align="center" type="index" width="60">
+			<el-table-column fixed label="序号" align="center" type="index" width="60" v-if="index">
 			</el-table-column>
 			<el-table-column :label="item.label" :prop="item.prop" :width="flexColumnWidth(item.prop,item.label,tableData,item.sort,item.type)" :sortable="item.sort?item.sort:false" align="center" v-for="item in titleList">
 				<template slot-scope="scope">
@@ -75,6 +75,11 @@
 		props:{
 			//是否展示多选
 			selection:{
+				type:Boolean,
+			default:true
+			},
+			//是否展示序号
+			index:{
 				type:Boolean,
 			default:true
 			},
@@ -212,7 +217,6 @@
 				if (!tableData || !tableData.length || tableData.length === 0 || tableData === undefined) {
 					return
 				}
-
 				if (!prop || !prop.length || prop.length === 0 || prop === undefined) {
 					return
 				}

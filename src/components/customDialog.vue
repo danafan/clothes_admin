@@ -49,7 +49,5 @@
 	}
 </script>
 <style lang="less" scoped>
-	.dialog_content{
-
-	}
+	
 </style>
