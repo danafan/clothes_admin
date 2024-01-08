@@ -28,22 +28,24 @@
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
 		<!-- 添加/编辑 -->
 		<custom-dialog dialogWidth="580px" :dialogTitle="`${dialog_type == 'add'?'添加':'编辑'}角色`" ref="addEditDialog" @close="clearForm" @callback="addEditConfirm">
-			<el-form class="dialog_form" label-width="90px">
-				<el-form-item label="角色名称：" required>
-					<el-input style="width:232px" type="text" placeholder="输入角色名称" v-model="name"></el-input>
-				</el-form-item>
-				<el-form-item class="auto_form_item" label="备注：" required>
-					<el-input style="width:232px" type="textarea" :rows="3" placeholder="输入备注..." v-model="remark">
-					</el-input>
-				</el-form-item>
-				<el-form-item label="访问权限：">
-					<div class="menu_list_box">
-						<div class="menu_item" v-for="item in menu_list">
-							<el-tree :data="item" ref="tree" node-key="menu_id" :default-checked-keys="checked_keys" :props="props" show-checkbox @check="checkChange"></el-tree>
+			<div class="access_box">
+				<el-form class="dialog_form" label-width="90px">
+					<el-form-item label="角色名称：" required>
+						<el-input style="width:232px" type="text" placeholder="输入角色名称" v-model="name"></el-input>
+					</el-form-item>
+					<el-form-item class="auto_form_item" label="备注：" required>
+						<el-input style="width:232px" type="textarea" :rows="3" placeholder="输入备注..." v-model="remark">
+						</el-input>
+					</el-form-item>
+					<el-form-item label="访问权限：">
+						<div class="menu_list_box">
+							<div class="menu_item" v-for="item in menu_list">
+								<el-tree :data="item" ref="tree" node-key="menu_id" :default-checked-keys="checked_keys" :props="props" show-checkbox @check="checkChange"></el-tree>
+							</div>
 						</div>
-					</div>
-				</el-form-item>
-			</el-form>
+					</el-form-item>
+				</el-form>
+			</div>
 		</custom-dialog>
 		<!-- 详情 -->
 		<custom-dialog dialogWidth="580px" dialogTitle="角色详情" :showConfirm="false" cancelText="关闭" ref="detailDialog">
@@ -381,5 +383,16 @@
 	}
 </style>
 <style lang="less" scoped>
-
+	.access_box{
+		height: 360px;
+		overflow-y: scroll;
+	}
+	.menu_list_box{
+		flex:1;
+		display: flex;
+		flex-wrap: wrap;
+		.menu_item{
+			width:50%;
+		}
+	}
 </style>

@@ -26,7 +26,7 @@
 			<div class="p16 flex ac jsb" id="table_setting">
 				<div class="table_color f14 fw500">数据列表</div>
 				<div class="flex">
-					<SettingButton :img="require('@/static/export_icon.png')" text="导出" @callback="$refs.exportDialog.show_dialog = true"/>
+					<SettingButton :img="require('@/static/export_icon.png')" text="导出" @callback="clickExport('data')"/>
 					<SettingButton :img="require('@/static/series_icon.png')" text="管理系列" @callback="getSeries"/>
 					<SettingButton :img="require('@/static/create_icon.png')" text="管理品类" @callback="getCategory"/>
 					<SettingButton :img="require('@/static/create_icon.png')" text="添加品牌" @callback="addEditBrand('','add')"/>
@@ -106,6 +106,7 @@
 		<!-- 系列管理 -->
 		<custom-dialog dialogTitle="管理系列" dialogWidth="520px" :showConfirm="false" cancelText="关闭" @close="series_name = ''" ref="seriesDialog">
 			<div class="flex jse mb8">
+				<SettingButton :img="require('@/static/export_icon.png')" text="导出" @callback="clickExport('series')"/>
 				<el-popover
 				title="添加系列"
 				placement="top"
@@ -143,6 +144,7 @@
 	<!-- 品类管理 -->
 	<custom-dialog dialogTitle="管理品类" dialogWidth="520px" :showConfirm="false" cancelText="关闭" @close="category_name = ''" ref="categoryDialog">
 		<div class="flex jse mb8">
+			<SettingButton :img="require('@/static/export_icon.png')" text="导出" @callback="clickExport('category')"/>
 			<el-popover
 			title="添加品类"
 			placement="top"
@@ -296,10 +298,12 @@
 					type:5
 				},{
 					label:'品类',
-					prop:'category_num'
+					prop:'category_num',
+					type:4
 				},{
 					label:'系列',
-					prop:'series_num'
+					prop:'series_num',
+					type:4
 				},{
 					label:'成员数量',
 					prop:'user_num',
@@ -404,13 +408,22 @@
 				//获取列表
 				this.getData();
 			},
-			//点击成员数量
+			//点击成员数量/品类/系列
 			buttonCallback(arg){
-				this.brand_id = arg.row.brand_id;
-				this.view_brand_name = arg.row.brand_name;
-				this.$refs.userListDialog.show_dialog = true;
-				//获取品牌成员
-				this.getUserData();
+				if(arg.prop == 'user_num'){
+					this.brand_id = arg.row.brand_id;
+					this.view_brand_name = arg.row.brand_name;
+					this.$refs.userListDialog.show_dialog = true;
+					//获取品牌成员
+					this.getUserData();
+				}else if(arg.prop == 'category_num'){	//品类
+					//点击编辑品类
+					this.editCate(arg.row.brand_id);
+				}else if(arg.prop == 'series_num'){	//系列
+					//点击编辑系列
+					this.editSeries(arg.row.brand_id);
+				}
+				
 			},
 			//获取品牌成员
 			getUserData(){
@@ -615,18 +628,33 @@
 					}
 				})
 			},
+			//点击导出
+			clickExport(type){
+				this.export_type = type;
+				this.$refs.exportDialog.show_dialog = true;
+			},
 			//导出
 			exportFn(){
-				let arg = {
-					search:this.search,
-					is_enable:this.is_enable,
+				var export_url = "";
+				if(this.export_type == 'data'){		//数据表格
+					let arg = {
+						search:this.search,
+						is_enable:this.is_enable,
+					}
+					let arg_arr = [];
+					for(let k in arg){
+						arg_arr.push(`${k}=${arg[k]}`)
+					}
+					export_url = `${location.origin}/api/brand/export?${arg_arr.join('&')}`;
+				}else if(this.export_type == 'category'){	//品类管理
+					export_url = `${location.origin}/api/category/category_export`;
+				}else if(this.export_type == 'series'){		//系列管理
+					export_url = `${location.origin}/api/series/series_export`;
 				}
-				let arg_arr = [];
-				for(let k in arg){
-					arg_arr.push(`${k}=${arg[k]}`)
-				}
-				let export_url = `${location.origin}/api/brand/export?${arg_arr.join('&')}`;
+				this.$refs.exportDialog.show_dialog = false;
 				console.log(export_url)
+				window.open(export_url)
+				
 			},
 			//点击系列管理
 			getSeries(){

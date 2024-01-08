@@ -25,10 +25,6 @@
 					<span class="text_style" v-else-if="item.type == 3 && scope.row[item.prop]" @click="openWindow(scope.row[item.prop])">预览</span>
 					<!-- 按钮 -->
 					<span class="text_style" v-else-if="item.type == 4" @click="buttonCallback(scope.row,item.prop)">{{scope.row[item.prop]}}</span>
-					<!-- 品牌属性库编辑品类 -->
-					<span class="text_style" v-else-if="tableName == 'brandAttribute' && item.prop == 'category_num'" @click="$emit('editCate',scope.row.brand_id)">{{scope.row[item.prop]}}</span>
-					<!-- 品牌属性库编辑系列 -->
-					<span class="text_style" v-else-if="tableName == 'brandAttribute' && item.prop == 'series_num'" @click="$emit('editSeries',scope.row.brand_id)">{{scope.row[item.prop]}}</span>
 					<!-- 开关 -->
 					<el-switch v-else-if="item.type == 5" :active-value="1" :inactive-value="0" v-model="scope.row[item.prop]" active-color="#3F8CFF" inactive-color="#ff4949" @change="changeStatus">
 					</el-switch>
@@ -41,9 +37,9 @@
 				<template slot-scope="scope">
 					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
 					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'customerData'">添加成员</span>
-					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority' || tableName == 'authSetting' || tableName == 'mainInfo' || tableName == 'basicAuthInfo' || tableName == 'customerData'">编辑</span>
-					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="tableName == 'accessAuthority' || tableName == 'mainInfo' || tableName == 'basicAuthInfo'">查看</span>
-					<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || tableName == 'accessAuthority'">删除</span>
+					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || (tableName == 'accessAuthority' && scope.row.is_disable == 0) || tableName == 'authSetting' || tableName == 'mainInfo' || tableName == 'basicAuthInfo' || tableName == 'customerData'">编辑</span>
+					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="(tableName == 'accessAuthority' && scope.row.is_disable == 0) || tableName == 'mainInfo' || tableName == 'basicAuthInfo'">查看</span>
+					<span class="text_style" @click="$emit('deleteFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || (tableName == 'accessAuthority' && scope.row.is_disable == 0)">删除</span>
 					<span class="text_style" @click="$emit('transferFn',scope.row)" v-if="tableName == 'basicAuthInfo'">转移主体</span>
 				</template>
 			</el-table-column>

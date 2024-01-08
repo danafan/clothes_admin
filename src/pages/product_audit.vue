@@ -229,6 +229,9 @@
 					label:'产品卖点',
 					prop:'selling_point',
 				},{
+					label:'使用人群',
+					prop:'user_group',
+				},{
 					label:'细节图',
 					prop:'detail_imgs',
 					type:2

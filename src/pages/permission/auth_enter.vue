@@ -141,10 +141,13 @@
 		},
 		methods: {
 		 	//根据选中的菜单获取按钮列表
-			ajaxAccess(menu_id){
+			ajaxAccess(menu_id,button_access_ids){
 				resource.ajaxAccess({menu_id:menu_id}).then(res => {
 					if(res.data.code == 1){
 						this.access_buts = res.data.data;
+						if (button_access_ids) {
+    						this.button_access_ids = button_access_ids;
+    					}
 					}else{
 						this.$message.warning(res.data.msg);
 					}
@@ -201,7 +204,12 @@
 							this.access_codes = data.access_codes;
 							this.is_button = data.is_button;	//是否按钮
 							this.button_name = data.button_name;
-							this.button_access_ids = data.button_access_ids.split(',');
+							let strArr = data.button_access_ids.split(",");
+							let intArr = strArr.map((item) => {
+								return +item;
+							});
+							//选择按钮的列表
+							this.ajaxAccess(row.menu_id, intArr);
 							this.$refs.addEditDialog.show_dialog = true;
 						}else{
 							this.$message.warning(res.data.msg);

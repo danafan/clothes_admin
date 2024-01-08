@@ -103,7 +103,7 @@
 					type:4,
 				},{
 					label:'添加时间',
-					prop:'add_user_name',
+					prop:'add_time',
 				},{
 					label:'备注',
 					prop:'remark'
