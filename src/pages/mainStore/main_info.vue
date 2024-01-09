@@ -546,7 +546,7 @@
 				}
 				resource.mainBodyInfoExport(arg).then(res => {
 					if(res){
-						exportPost("\ufeff" + res.data,'公司主体资料表','csv');
+						exportPost("\ufeff" + res.data,'公司主体资料表','.xlsx');
 						this.$refs.exportDialog.show_dialog = false;
 					}
 				})

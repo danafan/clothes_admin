@@ -105,6 +105,7 @@
 </template>
 <script>
 	import resource from '@/api/resource.js'
+	import { exportExcel } from "@/utils/export.js";
 
 	import PageRadio from '@/components/pageRadio'
 	import SettingButton from '@/components/settingButton'
@@ -441,14 +442,10 @@
 			exportFn(){
 				let arg = {
 					search:this.search,
-					is_enable:this.is_enable,
+					is_enable:this.is_enable
 				}
-				let arg_arr = [];
-				for(let k in arg){
-					arg_arr.push(`${k}=${arg[k]}`)
-				}
-				let export_url = `${location.origin}/api/supplier/export?${arg_arr.join('&')}`;
-				console.log(export_url)
+				exportExcel(arg,'api/supplier/export');
+				this.$refs.exportDialog.show_dialog = false;
 			},
 			//监听排序
 			sortChange(v){

@@ -257,6 +257,7 @@
 </template>
 <script>
 	import resource from '@/api/resource.js'
+	import { exportExcel } from "@/utils/export.js";
 
 	import PageRadio from '@/components/pageRadio'
 	import SettingButton from '@/components/settingButton'
@@ -641,20 +642,13 @@
 						search:this.search,
 						is_enable:this.is_enable,
 					}
-					let arg_arr = [];
-					for(let k in arg){
-						arg_arr.push(`${k}=${arg[k]}`)
-					}
-					export_url = `${location.origin}/api/brand/export?${arg_arr.join('&')}`;
+					exportExcel(arg,'api/brand/export');
 				}else if(this.export_type == 'category'){	//品类管理
-					export_url = `${location.origin}/api/category/category_export`;
+					exportExcel({},'api/category/category_export');
 				}else if(this.export_type == 'series'){		//系列管理
-					export_url = `${location.origin}/api/series/series_export`;
+					exportExcel({},'api/series/series_export');
 				}
 				this.$refs.exportDialog.show_dialog = false;
-				console.log(export_url)
-				window.open(export_url)
-				
 			},
 			//点击系列管理
 			getSeries(){

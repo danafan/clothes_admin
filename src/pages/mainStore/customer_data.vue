@@ -294,7 +294,7 @@
 			exportFn(){
 				resource.customExport().then(res => {
 					if(res){
-						exportPost("\ufeff" + res.data,'客户资料表','csv');
+						exportPost("\ufeff" + res.data,'客户资料表','.xlsx');
 						this.$refs.exportDialog.show_dialog = false;
 					}
 				})

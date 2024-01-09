@@ -89,6 +89,7 @@
 </template>
 <script>
 	import resource from '@/api/resource.js'
+	import { exportExcel } from "@/utils/export.js";
 
 	import PageRadio from '@/components/pageRadio'
 	import SettingButton from '@/components/settingButton'
@@ -486,12 +487,8 @@
 				if(this.active_index > 0){
 					arg['admin_status'] = this.radio_list[this.active_index].id;
 				}
-				let arg_arr = [];
-				for(let k in arg){
-					arg_arr.push(`${k}=${arg[k]}`)
-				}
-				let export_url = `${location.origin}/api/goods/export?${arg_arr.join('&')}`;
-				console.log(export_url)
+				exportExcel(arg,'api/goods/export');
+				this.$refs.exportDialog.show_dialog = false;
 			},
 			//监听排序
 			sortChange(v){

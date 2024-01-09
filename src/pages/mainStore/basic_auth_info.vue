@@ -754,7 +754,7 @@
 				}
 				resource.shopExport(arg).then(res => {
 					if(res){
-						exportPost("\ufeff" + res.data,'店铺基础授权资料资料','csv');
+						exportPost("\ufeff" + res.data,'店铺基础授权资料资料','.xlsx');
 						this.$refs.exportDialog.show_dialog = false;
 					}
 				})
