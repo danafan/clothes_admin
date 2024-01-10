@@ -60,7 +60,7 @@
 					<el-input type="number" style="width:232px" v-model="tel"></el-input>
 				</el-form-item>
 				<el-form-item label="合作品牌：" required>
-					<el-select style="width:232px" v-model="brand_ids" multiple filterable placeholder="请选择品牌">
+					<el-select style="width:232px" v-model="brand_ids" multiple filterable collapse-tags reserve-keyword placeholder="请选择品牌">
 						<el-option v-for="item in brand_list" :key="item.brand_id" :label="item.brand_name" :value="item.brand_id">
 						</el-option>
 					</el-select>
