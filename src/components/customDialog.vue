@@ -7,6 +7,7 @@
 			</div>
 			<slot></slot>
 			<span slot="footer" class="dialog-footer flex jc">
+				<PageButton class="mr32" text="重置" type="plain" @callback="$emit('setDefault')" v-if="showDefault"/>
 				<PageButton :text="cancelText" type="plain" @callback="show_dialog = false"/>
 				<PageButton class="ml32" text="确定" @callback="$emit('callback')" v-if="showConfirm"/>
 			</span>
@@ -31,6 +32,11 @@
 			dialogTitle:{
 				type:String,
 			default:''
+			},
+			//是否展示【恢复默认】（自定义列表）
+			showDefault:{
+				type:Boolean,
+			default:false
 			},
 			//取消按钮默认文字
 			cancelText:{

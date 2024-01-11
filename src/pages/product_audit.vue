@@ -111,24 +111,18 @@
 					unread:false
 				},{
 					id:0,
-					name:'待发起',
-					icon:require('@/static/uploaded_icon.png'),
-					icon_active:require('@/static/uploaded_icon_active.png'),
-					unread:false
-				},{
-					id:1,
 					name:'待审核',
 					icon:require('@/static/await_audit.png'),
 					icon_active:require('@/static/await_audit_active.png'),
 					unread:false
 				},{
-					id:2,
+					id:1,
 					name:'审核通过',
 					icon:require('@/static/pass_icon.png'),
 					icon_active:require('@/static/pass_icon_active.png'),
 					unread:false
 				},{
-					id:3,
+					id:2,
 					name:'审核拒绝',
 					icon:require('@/static/turn_down.png'),
 					icon_active:require('@/static/turn_down_active.png'),
@@ -380,12 +374,10 @@
 						this.tableData = data.data;
 						this.tableData.map(item => {
 							if(item.admin_status == 0){
-								item['status_name'] = '待发起';
-							}else if(item.admin_status == 1){
 								item['status_name'] = '待审核';
-							}else if(item.admin_status == 2){
+							}else if(item.admin_status == 1){
 								item['status_name'] = '审核通过';
-							}else if(item.admin_status == 3){
+							}else if(item.admin_status == 2){
 								item['status_name'] = '审核拒绝';
 							}
 							let new_detail_imgs = [];

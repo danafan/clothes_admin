@@ -32,9 +32,10 @@
 					<SettingButton :img="require('@/static/create_icon.png')" text="添加" @callback="addEditFn('','add')"/>
 					<SettingButton :img="require('@/static/import_icon.png')" text="导入" @callback="$refs.importDialog.show_dialog = true"/>
 					<SettingButton :img="require('@/static/export_icon.png')" text="导出" @callback="$refs.exportDialog.show_dialog = true"/>
+					<CustomColumn :viewRow="view_row" :selectedIds="selected_ids" menuId="19" @callback="getData"/>
 				</div>
 			</div>
-			<CustomTable tableName="mainInfo" settingColumnWidth="120" :tableHeight="table_height" :titleList="titleList" :tableData="tableData" :loading="loading" :selection="false" @editFn="addEditFn($event,'edit')" @detailFn="addEditFn($event,'detail')"/>
+			<CustomTable tableName="mainInfo" settingColumnWidth="120" :tableHeight="table_height" :titleList="title_list" :tableData="tableData" :loading="loading" :selection="false" @editFn="addEditFn($event,'edit')" @detailFn="addEditFn($event,'detail')"/>
 		</div>
 		<Pagination :page="page" :pagesize="pagesize" :total="total" @changePage="changePage"/>
 		<!-- 添加/编辑/详情 -->
@@ -184,7 +185,7 @@
 </template>
 <script>
 	import resource from '@/api/resource.js'
-	import {exportPost} from '@/utils/export.js'
+	import {exportExcel} from '@/utils/export.js'
 
 	import SettingButton from '@/components/settingButton'
 	import ScreenButton from '@/components/screenButton'
@@ -194,6 +195,7 @@
 	import CustomDialog from '@/components/customDialog'
 	import UploadImage from '@/components/uploadImage'
 	import UploadFile from '@/components/uploadFile'
+	import CustomColumn from '@/components/customColumn'
 
 	export default{
 		data(){
@@ -212,6 +214,7 @@
 				page:1,
 				pagesize:10,
 				total:0,
+				title_list:[],						//动态列表
 				titleList:[
 				{
 					label:'主体类型',
@@ -292,10 +295,12 @@
 				tableData:[],
 				table_height:0,
 				loading:false,
-				company_id:"",						 //点击的公司主体ID
-				dialog_type:"add",					 //弹窗类型
-				dialog_title:'添加主体',			 	 //弹窗标题
-				detail_data:{},						 //详情
+				view_row:[],						//列表的所有列
+				selected_ids:[],					//当前选中的所有列
+				company_id:"",						//点击的公司主体ID
+				dialog_type:"add",					//弹窗类型
+				dialog_title:'添加主体',			 	//弹窗标题
+				detail_data:{},						//详情
 				info:{
 					main_body_type:"",
 					company_alias:"",
@@ -405,13 +410,28 @@
 				resource.companyMainBodyList(arg).then(res => {
 					if(res.data.code == 1){
 						this.loading = false;
-						let data = res.data.data.table_data;
-						this.tableData = data.data;
+						let data = res.data.data;
+						this.title_list = data.title_list;	//动态列表
+						this.title_list.map(item => {
+							item['label'] = item.row_name;
+							item['prop'] = item.row_field_name;
+							if(item.type == 3){
+								item['type'] = 2;
+							}
+							if(item.type == 4){
+								item['type'] = 3;
+							}
+						})
+
+						this.tableData = data.table_data.data;
 						this.tableData.map(item => {
 							item['business_license_url'] = item.business_license_url?item.business_license_url.split(','):'';
 							item['id_card_url'] = item.id_card_url?item.id_card_url.split(','):'';
 						})
-						this.total = data.total;
+						this.total = data.table_data.total;
+
+						this.view_row = data.view_row;
+						this.selected_ids = data.selected_ids;
 					}else{
 						this.$message.warning(res.data.msg);
 					}
@@ -544,12 +564,8 @@
 					company_alias:this.company_alias,
 					main_body_type:this.main_body_type_id
 				}
-				resource.mainBodyInfoExport(arg).then(res => {
-					if(res){
-						exportPost("\ufeff" + res.data,'公司主体资料表','.xlsx');
-						this.$refs.exportDialog.show_dialog = false;
-					}
-				})
+				exportExcel(arg,'api/company_main_body/export');
+				this.$refs.exportDialog.show_dialog = false;
 			},
 			//点击下载模版
 			downTemplate(){
@@ -581,7 +597,8 @@
 			CustomTable,
 			CustomDialog,
 			UploadImage,
-			UploadFile
+			UploadFile,
+			CustomColumn
 		}
 	}
 </script>

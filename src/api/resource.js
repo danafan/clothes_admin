@@ -36,6 +36,7 @@ let path = {
 	adminSeriesAdd:'api/series/add',					//添加系列
 	brandEditCategory:'api/brand/category',				//点击编辑选中的品类（详情或提交）
 	brandEditSeries:'api/brand/series',					//点击编辑选中的系列（详情或提交）
+	setColumns:'api/common/setcolumns',					//自定义列
 	//主体
 	ajaxParams:'api/company_main_body/ajax_params',		//获取所有下拉框数据
 	companyMainBodyList:'api/company_main_body/list',	//公司主体资料表
@@ -43,18 +44,15 @@ let path = {
 	companyMainBodyEdit:'api/company_main_body/edit',	//编辑公司主体
 	ajaxCompany:'api/company_main_body/ajax_company',	//获取客户列表
 	companyMainBodyInfo:'api/company_main_body/info',	//获取主体详情
-	mainBodyInfoExport:'api/company_main_body/export',	//公司主体资料表导出
 	mainBodyInfoImport:'api/company_main_body/import_company',	//公司主体资料表导入
 	shopList:'api/company_main_body/shop_list',			//店铺基础授权资料
 	importShop:'api/company_main_body/import_shop',		//店铺基础授权资料导入
-	shopExport:'api/company_main_body/shop_export',		//店铺基础授权资料导出
 	addShop:'api/company_main_body/add_shop',			//创建店铺基础授权资料
 	editShop:'api/company_main_body/edit_shop',			//编辑店铺基础授权资料
 	shopInfo:'api/company_main_body/shop_info',			//店铺基础授权资料详情
 	transferMian:'api/company_main_body/transfer',		//转移主体
 	changeList:'api/company_main_body/change_list',		//获取主体变更记录
 	customList:'api/company_main_body/custom_list',		//客户列表
-	customExport:'api/company_main_body/custom_export',	//客户列表导出
 	addCustom:'api/company_main_body/add_custom',		//添加客户资料
 	editCustom:'api/company_main_body/edit_custom',		//编辑客户资料
 	customUsers:'api/company_main_body/custom_users',	//客户成员表
@@ -324,6 +322,10 @@ export default{
 	brandEditSeriesPost(params){
 		return http.post(path.brandEditSeries, params)
 	},
+	//自定义列
+	setColumns(params){
+		return http.post(path.setColumns, params)
+	},
 	//获取所有下拉框数据
 	ajaxParams(params){
 		return http.get(path.ajaxParams, params)
@@ -352,10 +354,6 @@ export default{
 	companyMainBodyInfo(params){
 		return http.get(path.companyMainBodyInfo, params)
 	},
-	//公司主体资料表导出
-	mainBodyInfoExport(params){
-		return http.post(path.mainBodyInfoExport, params)
-	},
 	//公司主体资料表导入
 	mainBodyInfoImport(params){
 		return http.post(path.mainBodyInfoImport, params)
@@ -367,10 +365,6 @@ export default{
 	//店铺基础授权资料导入
 	importShop(params){
 		return http.post(path.importShop, params)
-	},
-	//店铺基础授权资料导出
-	shopExport(params){
-		return http.post(path.shopExport, params)
 	},
 	//创建前获取店铺基础授权资料
 	addShop(params){
@@ -399,10 +393,6 @@ export default{
 	//客户列表
 	customList(params){
 		return http.get(path.customList, params)
-	},
-	//客户列表导出
-	customExport(params){
-		return http.post(path.customExport, params)
 	},
 	//添加客户资料
 	addCustom(params){

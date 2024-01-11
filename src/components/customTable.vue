@@ -1,11 +1,11 @@
 <template>
 	<div class="relative" :style="{'height':`${tableHeight}px`}">
-		<el-table ref="customTable" class="custom_table" :height="tableHeight" :data="tableData" :header-cell-style="{'background':'#E2EAFF','height':'88px','color':'#4E5969','font-size':'14px'}" :fit="false" @sort-change="sortChange" @selection-change="selectionChange" v-loading="loading" border>
+		<el-table ref="customTable" class="custom_table" :height="tableHeight" :data="tableData" :header-cell-style="{'background':'#E2EAFF','height':'88px','color':'#4E5969','font-size':'14px'}" :fit="false" @sort-change="sortChange" @selection-change="selectionChange" border v-loading="loading">
 			<el-table-column fixed align="center" type="selection" width="48" v-if="selection">
 			</el-table-column>
 			<el-table-column fixed label="序号" align="center" type="index" width="60" v-if="index">
 			</el-table-column>
-			<el-table-column :label="item.label" :prop="item.prop" :width="flexColumnWidth(item.prop,item.label,tableData,item.sort,item.type)" :sortable="item.sort?item.sort:false" align="center" v-for="item in titleList">
+			<el-table-column :label="item.label" :prop="item.prop" :width="flexColumnWidth(item.prop,item.label,tableData,item.is_sort,item.type)" :sortable="item.is_sort === 1?true:false" align="center" v-for="item in titleList">
 				<template slot-scope="scope">
 					<!-- 普通图片 -->
 					<el-image class="relative" style="top: 3px;" :z-index="2006" :src="domain + scope.row[item.prop]" fit="scale-down" @click="viewImage('only',scope.row[item.prop],scope.row)" v-if="item.type == 1"></el-image>
@@ -35,7 +35,7 @@
 			<!-- 操作栏 -->
 			<el-table-column label="操作" align="center" :width="settingColumnWidth" :fixed="set_column_fixed?'right':false" v-if="Setting">
 				<template slot-scope="scope">
-					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 1">审核</span>
+					<span class="text_style" @click="$emit('auditFn',scope.row.goods_id)" v-if="tableName == 'productAudit' && scope.row.admin_status == 0">审核</span>
 					<span class="text_style" @click="$emit('addMember',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'customerData'">添加成员</span>
 					<span class="text_style" @click="$emit('editFn',scope.row)" v-if="tableName == 'supplierList' || tableName == 'brandAttribute' || tableName == 'authEnter' || (tableName == 'accessAuthority' && scope.row.is_disable == 0) || tableName == 'authSetting' || tableName == 'mainInfo' || tableName == 'basicAuthInfo' || tableName == 'customerData'">编辑</span>
 					<span class="text_style" @click="$emit('detailFn',scope.row)" v-if="(tableName == 'accessAuthority' && scope.row.is_disable == 0) || tableName == 'mainInfo' || tableName == 'basicAuthInfo'">查看</span>
@@ -139,6 +139,11 @@
 			tableTotalWidth(){
 				return this.$store.state.tableTotalWidth;
 			},
+		},
+		updated(){
+			this.$nextTick(() => {
+				this.$refs.customTable.doLayout();
+			})
 		},
 		watch:{
 			//监听表格可用宽度
@@ -263,7 +268,7 @@
 					flexWidth = flexWidth + 32
 				}
 				//处理排序
-				if(tableData[index][prop] && (tableData[index][prop].length <= label.length && sort)){
+				if(tableData[index][prop] && (tableData[index][prop].length <= label.length && sort === 1)){
 					flexWidth += 14
 				}
 				//处理图片展示

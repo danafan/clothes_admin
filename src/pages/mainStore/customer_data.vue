@@ -71,7 +71,7 @@
 </template>
 <script>
 	import resource from '@/api/resource.js'
-	import {exportPost} from '@/utils/export.js'
+	import {exportExcel} from '@/utils/export.js'
 
 	import SettingButton from '@/components/settingButton'
 	import ScreenButton from '@/components/screenButton'
@@ -292,12 +292,8 @@
 			},
 			//导出
 			exportFn(){
-				resource.customExport().then(res => {
-					if(res){
-						exportPost("\ufeff" + res.data,'客户资料表','.xlsx');
-						this.$refs.exportDialog.show_dialog = false;
-					}
-				})
+				exportExcel({},'api/company_main_body/custom_export');
+				this.$refs.exportDialog.show_dialog = false;
 			},
 			//点击添加成员
 			addMember(row){

@@ -38,7 +38,11 @@
 				if(this.total == 0 || this.total/this.pagesize <= 1){
 					return 1;
 				}else{
-					return Math.floor(this.total/this.pagesize) + 1;
+					if(this.total%this.pagesize == 0){
+						return Math.floor(this.total/this.pagesize);
+					}else{
+						return Math.floor(this.total/this.pagesize) + 1;
+					}
 				}
 			},
 			//切换页码
