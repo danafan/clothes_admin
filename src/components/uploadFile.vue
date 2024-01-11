@@ -17,7 +17,7 @@
 		data(){
 			return{
 				upload_loading:false,					//上传中
-				accept:'application/pdf',
+				accept:'application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 			}
 		},
 		props:{
@@ -44,7 +44,7 @@
 			//上传文件类型
 			fileType:{
 				type:String,
-			default:'pdf'
+			default:'all'
 			}
 		},
 		watch:{
@@ -56,6 +56,9 @@
 					break;
 				case 'excel':
 					this.accept = 'application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+					break;
+				case 'all':
+					this.accept = 'application/pdf,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
 					break;
 				default:
 					return;
@@ -73,7 +76,7 @@
 			uploadFile(){
 				if (this.$refs.uploadFile.files.length > 0) {
 					let files = this.$refs.uploadFile.files;
-					let type = files[0].type == 'application/vnd.ms-excel' || files[0].type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'?2:3
+					let type = this.fileType == 'excel'?2:3;
 					let arg = {
 						file:files[0],
 						type:type

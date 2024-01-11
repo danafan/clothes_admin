@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<SettingButton :img="require('@/static/create_icon.png')" text="自定义列表" @callback="getData"/>
+		<SettingButton :img="require('@/static/custom_column.png')" text="自定义列表" @callback="getData"/>
 		<custom-dialog dialogTitle="自定义列表" ref="columnDialog" dialogWidth="520px" :showDefault="true" @setDefault="setDefault" @close="setDefault('close')" @callback="confirmFn">
 			<div>
 				<el-checkbox-group v-model="selected_ids">
